@@ -6,27 +6,50 @@ function MyButton(props) {
   let flex = props.flex ? props.flex : 0;
   let color = props.color ? props.color : "#119fb8";
   let textColor = props.textColor ? props.textColor : "#ffffff";
+  let padding = props.padding ? props.padding : 8;
+  let margin = props.margin ? props.margin : 8;
+  let borderWidth = props.borderWidth ? props.borderWidth : 0;
+  let verticalPadding = props.verticalPadding ? props.verticalPadding : padding;
+  let textSize = props.textSize ? props.textSize : 14;
+  let fontWeight = props.fontWeight ? props.fontWeight : "normal";
+  if (props.verticalPadding !== undefined) {
+    padding = 1;
+  }
 
   let buttonStyle = {
     ...styles.button,
+    ...{
+      backgroundColor: color,
+      padding: padding,
+      margin: margin,
+      borderWidth: borderWidth,
+      paddingVertical: verticalPadding,
+    },
   };
   if (flex === 0) {
     buttonStyle = {
-      ...styles.button,
+      ...buttonStyle,
       ...{ width: width, height: height },
     };
   }
   if (props.heightOnly !== undefined) {
     buttonStyle = {
       ...styles.button,
+      ...{
+        backgroundColor: color,
+        padding: padding,
+        margin: margin,
+        borderWidth: borderWidth,
+        paddingVertical: verticalPadding,
+      },
       ...{ height: props.heightOnly },
     };
   }
 
-  buttonStyle = {
-    ...buttonStyle,
-    ...{ backgroundColor: color },
-  };
+  // buttonStyle = {
+  //   ...buttonStyle,
+  //   ...{ backgroundColor: color, padding: padding, margin: margin },
+  // };
   return (
     <Pressable
       //   onPress={props.onDeleteItem.bind(this, props.id)}
@@ -38,7 +61,15 @@ function MyButton(props) {
       {/* Text with button text style and custom text */}
       <View style={buttonStyle}>
         {/* <View style={styles.button}> */}
-        <Text style={{ color: textColor }}>{props.text}</Text>
+        <Text
+          style={{
+            color: textColor,
+            fontSize: textSize,
+            fontWeight: fontWeight,
+          }}
+        >
+          {props.text}
+        </Text>
       </View>
     </Pressable>
   );
@@ -48,12 +79,11 @@ export default MyButton;
 
 const styles = StyleSheet.create({
   button: {
-    margin: 8,
     borderRadius: 6,
-    padding: 8,
     color: "#ffffff",
     alignItems: "center",
     justifyContent: "center",
+    borderColor: "#808080",
   },
   pressed: { opacity: 0.5 },
 });
