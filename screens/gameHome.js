@@ -142,7 +142,17 @@ const GameHome = ({ route, navigation }) => {
   }
 
   function onScreenLoad() {
-    let timeStamp = new Date(timestamp);
+    let year = timestamp.substring(0, 4);
+    let month = timestamp.split("-")[1];
+    let day = timestamp.split("-")[2];
+    day = day.split(" ")[0];
+
+    let time = timestamp.split(" ")[1];
+    let hour = time.split(":")[0];
+    let minute = time.split(":")[1];
+    let second = time.split(":")[2];
+
+    let timeStamp = new Date(year, month - 1, day, hour, minute, second);
 
     // timeStr to be used in sql query
     let timeStr =
@@ -243,6 +253,7 @@ const GameHome = ({ route, navigation }) => {
             navigation.navigate("Record Game", {
               opponent: opponent,
               timestamp: timeStr,
+              startOffence: Boolean(toggleCheckBox),
             })
           }
           text={"Start/Continue Recording"}

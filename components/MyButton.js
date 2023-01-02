@@ -12,6 +12,9 @@ function MyButton(props) {
   let verticalPadding = props.verticalPadding ? props.verticalPadding : padding;
   let textSize = props.textSize ? props.textSize : 14;
   let fontWeight = props.fontWeight ? props.fontWeight : "normal";
+  let disabled = props.disabled ? props.disabled : false;
+  var onPress = props.onPress;
+
   if (props.verticalPadding !== undefined) {
     padding = 1;
   }
@@ -46,14 +49,21 @@ function MyButton(props) {
     };
   }
 
+  if (disabled) {
+    buttonStyle = {
+      ...buttonStyle,
+      ...{ backgroundColor: "#808080" },
+    };
+    onPress = () => {};
+  }
+
   // buttonStyle = {
   //   ...buttonStyle,
   //   ...{ backgroundColor: color, padding: padding, margin: margin },
   // };
   return (
     <Pressable
-      //   onPress={props.onDeleteItem.bind(this, props.id)}
-      onPress={props.onPress}
+      onPress={onPress}
       style={({ pressed }) => pressed && styles.pressed}
       flex={props.flex}
     >

@@ -13,11 +13,15 @@ import MyButton from "../components/MyButton";
 import PLayerItem from "../components/playerItem";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
+import * as SQLite from "expo-sqlite";
+const ip = "http://192.168.1.4";
+
+const db = SQLite.openDatabase("game.db");
 
 async function addPlayerToDB(name, email, major, number, phone) {
   await axios({
     method: "post",
-    url: "http://192.168.1.4:3000/players",
+    url: ip + ":3000/players",
     data: {
       email: email,
       major: major,
@@ -50,12 +54,130 @@ const AddPlayer = () => {
 
   async function getPlayers() {
     // use mysql to get all players
-    return await axios({
+    let players = await axios({
       method: "get",
-      url: "http://192.168.1.4:3000/players",
+      url: ip + ":3000/players",
     }).then(function (response) {
       return response.data;
     });
+
+    // get players on local storage
+    let localPlayers = await new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "select * from player",
+          [],
+          (_, { rows: { _array } }) => {
+            resolve(_array);
+          },
+          (_, error) => {
+            reject(error);
+          }
+        );
+      });
+    });
+    // add players on mysql to local storage
+    let playerNames = playerInfotoNames(players);
+    let localPlayerNames = playerInfotoNames(localPlayers);
+    // if (localPlayerNames.length === playerNames.length) {
+    //   console.log("no new players");
+    // }
+    let newPlayers = [];
+    let dirty = false;
+    for (let i = 0; i < playerNames.length; i++) {
+      if (!localPlayerNames.includes(playerNames[i])) {
+        {
+          newPlayers.push(players[i]);
+          dirty = true;
+        }
+      }
+    }
+
+    // create values string
+    if (dirty) {
+      let values = "";
+      for (let i = 0; i < newPlayers.length - 1; i++) {
+        values +=
+          "('" +
+          newPlayers[i].name +
+          "', '" +
+          newPlayers[i].email +
+          "', '" +
+          newPlayers[i].major +
+          "', '" +
+          newPlayers[i].number +
+          "', '" +
+          newPlayers[i].phone +
+          "'),";
+      }
+
+      values +=
+        "('" +
+        newPlayers[newPlayers.length - 1].name +
+        "', '" +
+        newPlayers[newPlayers.length - 1].email +
+        "', '" +
+        newPlayers[newPlayers.length - 1].major +
+        "', '" +
+        newPlayers[newPlayers.length - 1].number +
+        "', '" +
+        newPlayers[newPlayers.length - 1].phone +
+        "')";
+
+      // add new players to local storage
+      // console.log(values);
+      await new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            "insert into player (name, email, major, number, phone) values " +
+              values,
+            [],
+            (_, { rows: { _array } }) => {
+              resolve(_array);
+            },
+            (_, error) => {
+              reject(error);
+            }
+          );
+        });
+      });
+    }
+
+    // see if a player is deleted on mysql
+    let deletedPlayers = [];
+    for (let i = 0; i < localPlayerNames.length; i++) {
+      if (!playerNames.includes(localPlayerNames[i])) {
+        deletedPlayers.push(localPlayerNames[i]);
+      }
+    }
+
+    // delete players on local storage
+    if (deletedPlayers.length > 0) {
+      let values = "";
+      let deleteQuery = "delete from player where name in (";
+      for (let i = 0; i < deletedPlayers.length - 1; i++) {
+        values += "'" + deletedPlayers[i] + "',";
+      }
+      values += "'" + deletedPlayers[deletedPlayers.length - 1] + "')";
+      deleteQuery += values;
+      // console.log(deleteQuery);
+      await new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+          tx.executeSql(
+            deleteQuery,
+            [],
+            (_, { rows: { _array } }) => {
+              resolve(_array);
+            },
+            (_, error) => {
+              reject(error);
+            }
+          );
+        });
+      });
+    }
+
+    return players;
   }
 
   const [players, setPlayers] = useState([]);
@@ -78,7 +200,7 @@ const AddPlayer = () => {
           onPress: async () => {
             await axios({
               method: "delete",
-              url: "http://192.168.1.4:3000/players/" + playerName,
+              url: ip + ":3000/players/" + playerName,
             })
               .then(function (response) {
                 return response.data;

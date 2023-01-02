@@ -19,11 +19,13 @@ import axios from "axios";
 import CheckBox from "expo-checkbox";
 import * as SQLite from "expo-sqlite";
 
+const ip = "http://192.168.1.4";
+
 async function getCompetitions() {
   // use mysql to get all competitions
   return await axios({
     method: "get",
-    url: "http://192.168.1.4:3000/competition",
+    url: ip + ":3000/competition",
   }).then(function (response) {
     return response.data;
   });
@@ -33,7 +35,7 @@ async function getOpponents() {
   // use mysql to get all opponents
   return await axios({
     method: "get",
-    url: "http://192.168.1.4:3000/opponent",
+    url: ip + ":3000/opponent",
   }).then(function (response) {
     return response.data;
   });
@@ -58,7 +60,7 @@ function opponentInfoToNames(opponentsInfo) {
 async function addCompetitiontoDB(name) {
   return await axios({
     method: "post",
-    url: "http://192.168.1.4:3000/competition",
+    url: ip + ":3000/competition",
     data: {
       name: name,
     },
@@ -74,7 +76,7 @@ async function addCompetitiontoDB(name) {
 async function addOpponenttoDB(name) {
   return await axios({
     method: "post",
-    url: "http://192.168.1.4:3000/opponent",
+    url: ip + ":3000/opponent",
     data: {
       name: name,
     },
@@ -283,7 +285,7 @@ const AddGame = ({ navigation }) => {
     let isHome = toggleCheckBox ? 1 : 0;
     await axios({
       method: "post",
-      url: "http://192.168.1.4:3000/game",
+      url: ip + ":3000/game",
       data: {
         category: selectedCompetition,
         opponent: selectedOpponent,
@@ -300,7 +302,9 @@ const AddGame = ({ navigation }) => {
     //get the timestamp of the game
     let timestamp = await axios({
       method: "get",
-      url: `http://192.168.1.4:3000/gameT?category=${selectedCompetition}&opponent=${selectedOpponent}`,
+      url:
+        ip +
+        `:3000/gameT?category=${selectedCompetition}&opponent=${selectedOpponent}`,
     })
       .then(function (response) {
         return response.data[0]["timestamp"];
