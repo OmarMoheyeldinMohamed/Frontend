@@ -16,6 +16,8 @@ import axios from "axios";
 import * as SQLite from "expo-sqlite";
 // import Keyboard
 import { Keyboard } from "react-native";
+import AnimatedLoader from "react-native-animated-loader";
+
 // const ip = "http://192.168.1.4:3000";
 const ip = "https://mayhembackend.onrender.com";
 
@@ -189,6 +191,7 @@ const AddPlayer = () => {
   const [enteredEmail, setEnteredEmail] = useState("");
   const [enteredPhone, setEnteredPhone] = useState("");
   const [enteredMajor, setEnteredMajor] = useState("");
+  const [visible, setVisible] = useState(true);
 
   function deletePlayerHandler(playerName) {
     Alert.alert(
@@ -308,6 +311,7 @@ const AddPlayer = () => {
       console.log("got players");
       var playerNames = playerInfotoNames(playersInfo);
       setPlayers(playerNames);
+      setVisible(false);
     } catch (err) {
       console.log(err);
     }
@@ -403,6 +407,16 @@ const AddPlayer = () => {
           }}
         ></FlatList>
       </View>
+
+      <AnimatedLoader
+        visible={visible}
+        overlayColor="rgba(255,255,255,0.3)"
+        animationStyle={styles.lottie}
+        speed={1}
+        source={require("../assets/loading.json")}
+      >
+        <Text>Loading Players...</Text>
+      </AnimatedLoader>
     </View>
   );
 };
@@ -442,5 +456,9 @@ const styles = StyleSheet.create({
     flex: 3,
     padding: 10,
     margin: 3,
+  },
+  lottie: {
+    width: 100,
+    height: 100,
   },
 });

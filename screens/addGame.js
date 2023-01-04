@@ -18,6 +18,7 @@ import Modal from "react-native-modal";
 import axios from "axios";
 import CheckBox from "expo-checkbox";
 import * as SQLite from "expo-sqlite";
+import AnimatedLoader from "react-native-animated-loader";
 
 // const ip = "http://192.168.1.4:3000";
 const ip = "https://mayhembackend.onrender.com";
@@ -92,48 +93,7 @@ async function addOpponenttoDB(name) {
 
 const AddGame = ({ navigation }) => {
   const db = SQLite.openDatabase("game.db");
-
-  // db.transaction((tx) => {
-  //   console.log("Started");
-
-  //   tx.executeSql(
-  //     `CREATE TABLE IF NOT EXISTS game (
-  //     opponent varchar(25) NOT NULL,
-  //     timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  //     myScore int DEFAULT '-1',
-  //     theirScore int DEFAULT '-1',
-  //     home tinyint(1) DEFAULT NULL,
-  //     category varchar(50) DEFAULT NULL,
-  //     startOffence tinyint(1) DEFAULT '1',
-  //     dirty tinyint(1) NOT NULL DEFAULT '1',
-  //     PRIMARY KEY (timestamp,opponent)
-  //   );
-  //   CREATE TABLE IF NOT EXISTS actionPerformed (
-  //     opponent varchar(25) NOT NULL,
-  //     gameTimestamp timestamp NOT NULL,
-  //     playerName varchar(25) NOT NULL,
-  //     action varchar(20) NOT NULL,
-  //     id int NOT NULL AUTO_INCREMENT,
-  //     point int NOT NULL,
-  //     timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  //     dirty tinyint(1) NOT NULL DEFAULT '1',
-  //     PRIMARY KEY (id,opponent,gameTimestamp,playerName,action),
-  //     KEY opponent (opponent),
-  //     KEY gameTimestamp (gameTimestamp),
-  //     KEY playerName (playerName),
-  //     KEY action (action),
-  //     CONSTRAINT actionPerformed_ibfk_2 FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp),
-  //   );
-  //   `,
-  //     null,
-  //     null,
-  //     (t, error) => {
-  //       console.log("Error: " + error);
-  //     }
-  //   );
-
-  //   console.log("Started");
-  // });
+  const [visible, setVisible] = useState(true);
 
   const [selectedCompetition, setSelectedCompetition] = React.useState([]);
   const [selectedOpponent, setSelectedOpponent] = React.useState([]);
@@ -164,6 +124,7 @@ const AddGame = ({ navigation }) => {
       var competitionsInfo = await getCompetitions();
       var competitionNames = competitionInfoToNames(competitionsInfo);
       setCompetitionsData(competitionNames);
+      setVisible(false);
     } catch (err) {
       console.log(err);
     }
@@ -516,6 +477,15 @@ const AddGame = ({ navigation }) => {
           justifyContent="center"
         />
       </View>
+      <AnimatedLoader
+        visible={visible}
+        overlayColor="rgba(255,255,255,0.3)"
+        animationStyle={styles.lottie}
+        speed={1}
+        source={require("../assets/loading.json")}
+      >
+        <Text>Loading...</Text>
+      </AnimatedLoader>
     </View>
   );
 };
@@ -523,6 +493,10 @@ const AddGame = ({ navigation }) => {
 export default AddGame;
 
 const styles = StyleSheet.create({
+  lottie: {
+    width: 100,
+    height: 100,
+  },
   container: {
     flex: 1,
     backgroundColor: "#fff",

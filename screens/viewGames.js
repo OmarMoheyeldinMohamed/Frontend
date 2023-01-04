@@ -27,7 +27,7 @@ async function getGames() {
         "SELECT * FROM game;",
         [],
         (tx, results) => {
-          console.log("result ", results["rows"]["_array"]);
+          // console.log("result ", results["rows"]["_array"]);
           resolve(results["rows"]["_array"]);
         },
         (tx, error) => {
@@ -45,7 +45,7 @@ const ViewGames = ({ navigation }) => {
   const [games, setGames] = React.useState([]);
   const onScreenLoad = async () => {
     try {
-      setGames(await getGames(), console.log(games));
+      setGames(await getGames());
     } catch (err) {
       console.log(err);
     }
@@ -79,10 +79,10 @@ const ViewGames = ({ navigation }) => {
       date.getMinutes() +
       ":" +
       date.getSeconds();
-    await axios
+    axios
       .delete(ip + "/game/" + item.opponent + "/" + timestampStr)
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         onScreenLoad();
       })
       .catch((error) => {
@@ -94,7 +94,7 @@ const ViewGames = ({ navigation }) => {
         "DELETE FROM game WHERE opponent=? AND timestamp=?;",
         [item.opponent, timestampStr],
         (tx, results) => {
-          console.log(results);
+          // console.log(results);
         },
         (tx, error) => {
           console.log(error);

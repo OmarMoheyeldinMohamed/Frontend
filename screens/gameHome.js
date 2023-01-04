@@ -1,11 +1,22 @@
 import { StatusBar } from "expo-status-bar";
-import { Button, StyleSheet, Text, View, Image, Pressable } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  Pressable,
+  Alert,
+} from "react-native";
+import Modal from "react-native-modal";
+
 import MyButton from "../components/MyButton";
 import { SelectList } from "react-native-dropdown-select-list";
 import React, { useEffect, useRef, useState } from "react";
 import CheckBox from "expo-checkbox";
 import * as SQLite from "expo-sqlite";
 import axios from "axios";
+import AnimatedLoader from "react-native-animated-loader";
 
 // const ip = "http://192.168.1.4:3000";
 const ip = "https://mayhembackend.onrender.com";
@@ -27,7 +38,8 @@ const GameHome = ({ route, navigation }) => {
   const db = SQLite.openDatabase("game.db");
 
   const [isCheckBoxDisabled, setIsCheckboxDisabled] = useState(false);
-
+  const [visible, setVisible] = useState(false);
+  const isSuccessfull = useRef(false);
   const {
     opponent,
     timestamp,
@@ -92,7 +104,7 @@ const GameHome = ({ route, navigation }) => {
     //   ":" +
     //   timeStamp.getSeconds();
 
-    console.log(timeStr);
+    // console.log(timeStr);
     await db.transaction((tx) => {
       tx.executeSql(
         `
@@ -102,8 +114,8 @@ const GameHome = ({ route, navigation }) => {
         `,
         null,
         (tx, results) => {
-          console.log("Query completed");
-          console.log(results);
+          // console.log("Query completed");
+          // console.log(results);
         },
         (tx, error) => {
           console.log("Error: " + error);
@@ -111,7 +123,7 @@ const GameHome = ({ route, navigation }) => {
       );
     });
 
-    await axios({
+    axios({
       method: "put",
       url: ip + "/gameUpdateOffence",
       data: {
@@ -239,14 +251,226 @@ const GameHome = ({ route, navigation }) => {
         }
       );
     });
+
+    if (myScore === -1) {
+      setMys(0);
+    }
+    if (theirScore === -1) {
+      setTheirs(0);
+    }
+    if (myScore !== -1 && theirScore !== -1) {
+      setMys(myScore);
+      setTheirs(theirScore);
+    }
+
+    if (myScore > theirScore) {
+      setWinlossStr("Won");
+    } else if (myScore < theirScore) {
+      setWinlossStr("Lost");
+    } else {
+      setWinlossStr("Draw");
+    }
   }
 
   useEffect(() => {
     onScreenLoad();
   }, []);
 
+  const [winlossStr, setWinlossStr] = useState("");
+  const [mys, setMys] = useState(-1);
+  const [theirs, setTheirs] = useState(-1);
+
+  function renderScore() {
+    return (
+      <Text style={[styles.text, { alignSelf: "center" }]}>
+        {mys} - {theirs} ({winlossStr})
+      </Text>
+    );
+  }
+
+  function doneUpload(status) {
+    setVisible(false);
+    if (status === 1) {
+      Alert.alert("Upload successful");
+    } else {
+      Alert.alert("Upload failed");
+    }
+  }
+
+  async function uploadGametoDB() {
+    // first delete all records for this game on the server
+    setVisible(true);
+    isSuccessfull.current = true;
+    await axios({
+      method: "delete",
+      url: ip + "/game/" + opponent + "/" + timestamp,
+      data: {},
+    })
+      .then(function (response) {
+        // console.log(response);
+      })
+      .catch(function (error) {
+        // console.warn(error);
+        doneUpload(0);
+        isSuccessfull.current = false;
+      });
+    await axios({
+      method: "delete",
+      url: ip + "/gameActions/" + opponent + "/" + timestamp,
+      data: {},
+    })
+      .then(function (response) {
+        // console.log(response);
+      })
+      .catch(function (error) {
+        // console.warn(error);
+        doneUpload(0);
+        isSuccessfull.current = false;
+      });
+
+    //get game details from local db
+    let gameDetails = await new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          `
+          SELECT * FROM game WHERE timestamp = "${timestamp}" AND opponent = "${opponent}";
+          `,
+          null,
+          (tx, results) => {
+            // console.log("Query completed");
+            // console.log(results);
+            resolve(results.rows._array[0]);
+          },
+          (tx, error) => {
+            // console.warn("Error: " + error);
+            doneUpload(0);
+            isSuccessfull.current = false;
+          }
+        );
+      });
+    });
+
+    // then upload all records for this game to the server
+    await axios({
+      method: "post",
+      url: ip + "/gameDetails",
+      data: {
+        opponent: gameDetails.opponent,
+        timestamp: gameDetails.timestamp,
+        myScore: gameDetails.myScore,
+        theirScore: gameDetails.theirScore,
+        isHome: gameDetails.home,
+        category: gameDetails.category,
+        startOffence: gameDetails.startOffence,
+      },
+    })
+      .then(function (response) {
+        // console.log(response);
+      })
+      .catch(function (error) {
+        // console.warn(error);
+        doneUpload(0);
+        isSuccessfull.current = false;
+      });
+
+    //get game actions from local db
+    let gameActions = await new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          `
+          SELECT * FROM actionPerformed WHERE gameTimestamp = "${timestamp}" AND opponent = "${opponent}";
+          `,
+          null,
+          (tx, results) => {
+            // console.log("Query completed");
+            // console.log(results);
+            resolve(results.rows._array);
+          },
+          (tx, error) => {
+            // console.warn("Error: " + error);
+            doneUpload(0);
+            isSuccessfull.current = false;
+          }
+        );
+      });
+    });
+
+    let values = "";
+    for (let i = 0; i < gameActions.length; i++) {
+      values +=
+        "('" + gameActions[i].opponent + "','" + gameActions[i].gameTimestamp;
+      if (gameActions[i].playerName !== null) {
+        values += "','" + gameActions[i].playerName + "','";
+      } else {
+        values += "',null,'";
+      }
+      values +=
+        gameActions[i].action +
+        "','" +
+        gameActions[i].point +
+        "','" +
+        gameActions[i].timestamp;
+      if (gameActions[i].associatedPlayer !== null) {
+        values += "','" + gameActions[i].associatedPlayer + "'),";
+      } else {
+        values += "',null),";
+      }
+    }
+    values = values.slice(0, -1);
+    // console.log(values);
+
+    await axios({
+      method: "post",
+      url: ip + "/gameActions",
+      data: {
+        values: values,
+      },
+    })
+      .then(function (response) {
+        // console.warn(response);
+      })
+
+      .catch(function (error) {
+        // console.warn(error);
+        doneUpload(0);
+        isSuccessfull.current = false;
+      });
+
+    if (isSuccessfull.current) {
+      doneUpload(1);
+    } else {
+      // doneUpload(0);
+    }
+  }
+  function uploadGame() {
+    Alert.alert(
+      "Warning",
+      "Please make sure you have the latest version of this game. If you upload an older version than the one on the server, the latest updates will be lost forever.",
+      [
+        {
+          text: "Yes",
+          style: "destructive",
+          onPress: () => {
+            uploadGametoDB();
+          },
+        },
+        { text: "No", style: "cancel" },
+      ],
+      {
+        cancelable: true,
+      }
+    );
+  }
+
   return (
     <View style={styles.container}>
+      <View style={{ width: "100%", alignItems: "flex-end" }}>
+        <MyButton
+          text={"Upload Game Online"}
+          onPress={uploadGame}
+          width={200}
+        />
+      </View>
       <View
         style={{
           flexDirection: "row",
@@ -272,6 +496,8 @@ const GameHome = ({ route, navigation }) => {
         />
       </View>
       {/* Display the items from renderDetails() */}
+      {renderScore()}
+
       {renderDetails()}
       <View
         style={{
@@ -301,8 +527,25 @@ const GameHome = ({ route, navigation }) => {
           }
           text={"View Events"}
         />
-        <MyButton text={"View Stats"} />
+        <MyButton
+          onPress={() =>
+            navigation.navigate("View Game Stats", {
+              opponent: opponent,
+              timestamp: timeStr,
+            })
+          }
+          text={"View Stats"}
+        />
       </View>
+      <AnimatedLoader
+        visible={visible}
+        overlayColor="rgba(255,255,255,0.3)"
+        animationStyle={styles.lottie}
+        speed={1}
+        source={require("../assets/loading.json")}
+      >
+        <Text>Uploading Game...</Text>
+      </AnimatedLoader>
     </View>
   );
 };
@@ -337,5 +580,9 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     alignContent: "center",
     justifyContent: "center",
+  },
+  lottie: {
+    width: 100,
+    height: 100,
   },
 });

@@ -2,9 +2,11 @@ import { StatusBar } from "expo-status-bar";
 import { Button, StyleSheet, Text, View, Image } from "react-native";
 import MyButton from "../components/MyButton";
 import React, { useEffect } from "react";
+import axios from "axios";
 
 import * as SQLite from "expo-sqlite";
 
+const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
 const Home = ({ navigation }) => {
@@ -18,6 +20,142 @@ const Home = ({ navigation }) => {
 
   function onViewGamesPress() {
     navigation.navigate("View Games");
+  }
+  async function getAllPlayers() {
+    // use mysql to get all players
+
+    let localPlayers = await new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "select * from player",
+          [],
+          (_, { rows: { _array } }) => {
+            resolve(_array);
+          },
+          (_, error) => {
+            reject(error);
+          }
+        );
+      });
+    });
+
+    // add players on mysql to local storage
+    let localPlayerNames = localPlayers.map((player) => {
+      return player.name;
+    });
+
+    axios({
+      method: "get",
+      url: ip + "/players",
+    })
+      .then(async function (response) {
+        let players = response.data;
+        if (players !== undefined) {
+          let playerNames = players.map((player) => {
+            return player.name;
+          });
+          // console.log(playerNames);
+          let newPlayers = [];
+          let dirty = false;
+          for (let i = 0; i < playerNames.length; i++) {
+            if (!localPlayerNames.includes(playerNames[i])) {
+              {
+                newPlayers.push(players[i]);
+                dirty = true;
+              }
+            }
+          }
+
+          // create values string
+          if (dirty) {
+            let values = "";
+            for (let i = 0; i < newPlayers.length - 1; i++) {
+              values +=
+                "('" +
+                newPlayers[i].name +
+                "', '" +
+                newPlayers[i].email +
+                "', '" +
+                newPlayers[i].major +
+                "', '" +
+                newPlayers[i].number +
+                "', '" +
+                newPlayers[i].phone +
+                "'),";
+            }
+
+            values +=
+              "('" +
+              newPlayers[newPlayers.length - 1].name +
+              "', '" +
+              newPlayers[newPlayers.length - 1].email +
+              "', '" +
+              newPlayers[newPlayers.length - 1].major +
+              "', '" +
+              newPlayers[newPlayers.length - 1].number +
+              "', '" +
+              newPlayers[newPlayers.length - 1].phone +
+              "')";
+
+            // add new players to local storage
+            // console.log(values);
+            await new Promise((resolve, reject) => {
+              db.transaction((tx) => {
+                tx.executeSql(
+                  "insert into player (name, email, major, number, phone) values " +
+                    values,
+                  [],
+                  (_, { rows: { _array } }) => {
+                    resolve(_array);
+                  },
+                  (_, error) => {
+                    reject(error);
+                  }
+                );
+              });
+            });
+          }
+
+          // see if a player is deleted on mysql
+          let deletedPlayers = [];
+          for (let i = 0; i < localPlayerNames.length; i++) {
+            if (!playerNames.includes(localPlayerNames[i])) {
+              deletedPlayers.push(localPlayerNames[i]);
+            }
+          }
+
+          // delete players on local storage
+          if (deletedPlayers.length > 0) {
+            let values = "";
+            let deleteQuery = "delete from player where name in (";
+            for (let i = 0; i < deletedPlayers.length - 1; i++) {
+              values += "'" + deletedPlayers[i] + "',";
+            }
+            values += "'" + deletedPlayers[deletedPlayers.length - 1] + "')";
+            deleteQuery += values;
+            // console.log(deleteQuery);
+            await new Promise((resolve, reject) => {
+              db.transaction((tx) => {
+                tx.executeSql(
+                  deleteQuery,
+                  [],
+                  (_, { rows: { _array } }) => {
+                    resolve(_array);
+                  },
+                  (_, error) => {
+                    reject(error);
+                  }
+                );
+              });
+            });
+          }
+        }
+
+        return response.data;
+      })
+      .catch(function (error) {
+        // console.log(error);
+      });
   }
 
   useEffect(() => {
@@ -127,6 +265,8 @@ const Home = ({ navigation }) => {
         }
       );
     });
+
+    getAllPlayers();
   }, []);
 
   return (

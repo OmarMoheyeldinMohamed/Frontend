@@ -15,7 +15,7 @@ import Modal from "react-native-modal";
 import axios from "axios";
 import * as SQLite from "expo-sqlite";
 // const ip = "http://192.168.1.4:3000";
-const ip = "https://mayhembackend.onrender.com/";
+const ip = "https://mayhembackend.onrender.com";
 
 let mayhemLogo = require("../assets/logo.png");
 let allImages = {
@@ -271,117 +271,117 @@ const RecordGame = ({ route, navigation }) => {
       })
     );
 
-    axios({
-      method: "get",
-      url: ip + "/players",
-    })
-      .then(async function (response) {
-        let players = response.data;
-        if (players !== undefined) {
-          let playerNames = players.map((player) => {
-            return player.name;
-          });
-          let newPlayers = [];
-          let dirty = false;
-          for (let i = 0; i < playerNames.length; i++) {
-            if (!localPlayerNames.includes(playerNames[i])) {
-              {
-                newPlayers.push(players[i]);
-                dirty = true;
-              }
-            }
-          }
+    // axios({
+    //   method: "get",
+    //   url: ip + "/players",
+    // })
+    //   .then(async function (response) {
+    //     let players = response.data;
+    //     if (players !== undefined) {
+    //       let playerNames = players.map((player) => {
+    //         return player.name;
+    //       });
+    //       let newPlayers = [];
+    //       let dirty = false;
+    //       for (let i = 0; i < playerNames.length; i++) {
+    //         if (!localPlayerNames.includes(playerNames[i])) {
+    //           {
+    //             newPlayers.push(players[i]);
+    //             dirty = true;
+    //           }
+    //         }
+    //       }
 
-          // create values string
-          if (dirty) {
-            let values = "";
-            for (let i = 0; i < newPlayers.length - 1; i++) {
-              values +=
-                "('" +
-                newPlayers[i].name +
-                "', '" +
-                newPlayers[i].email +
-                "', '" +
-                newPlayers[i].major +
-                "', '" +
-                newPlayers[i].number +
-                "', '" +
-                newPlayers[i].phone +
-                "'),";
-            }
+    //       // create values string
+    //       if (dirty) {
+    //         let values = "";
+    //         for (let i = 0; i < newPlayers.length - 1; i++) {
+    //           values +=
+    //             "('" +
+    //             newPlayers[i].name +
+    //             "', '" +
+    //             newPlayers[i].email +
+    //             "', '" +
+    //             newPlayers[i].major +
+    //             "', '" +
+    //             newPlayers[i].number +
+    //             "', '" +
+    //             newPlayers[i].phone +
+    //             "'),";
+    //         }
 
-            values +=
-              "('" +
-              newPlayers[newPlayers.length - 1].name +
-              "', '" +
-              newPlayers[newPlayers.length - 1].email +
-              "', '" +
-              newPlayers[newPlayers.length - 1].major +
-              "', '" +
-              newPlayers[newPlayers.length - 1].number +
-              "', '" +
-              newPlayers[newPlayers.length - 1].phone +
-              "')";
+    //         values +=
+    //           "('" +
+    //           newPlayers[newPlayers.length - 1].name +
+    //           "', '" +
+    //           newPlayers[newPlayers.length - 1].email +
+    //           "', '" +
+    //           newPlayers[newPlayers.length - 1].major +
+    //           "', '" +
+    //           newPlayers[newPlayers.length - 1].number +
+    //           "', '" +
+    //           newPlayers[newPlayers.length - 1].phone +
+    //           "')";
 
-            // add new players to local storage
-            // console.log(values);
-            await new Promise((resolve, reject) => {
-              db.transaction((tx) => {
-                tx.executeSql(
-                  "insert into player (name, email, major, number, phone) values " +
-                    values,
-                  [],
-                  (_, { rows: { _array } }) => {
-                    resolve(_array);
-                  },
-                  (_, error) => {
-                    reject(error);
-                  }
-                );
-              });
-            });
-          }
+    //         // add new players to local storage
+    //         // console.log(values);
+    //         await new Promise((resolve, reject) => {
+    //           db.transaction((tx) => {
+    //             tx.executeSql(
+    //               "insert into player (name, email, major, number, phone) values " +
+    //                 values,
+    //               [],
+    //               (_, { rows: { _array } }) => {
+    //                 resolve(_array);
+    //               },
+    //               (_, error) => {
+    //                 reject(error);
+    //               }
+    //             );
+    //           });
+    //         });
+    //       }
 
-          // see if a player is deleted on mysql
-          let deletedPlayers = [];
-          for (let i = 0; i < localPlayerNames.length; i++) {
-            if (!playerNames.includes(localPlayerNames[i])) {
-              deletedPlayers.push(localPlayerNames[i]);
-            }
-          }
+    //       // see if a player is deleted on mysql
+    //       let deletedPlayers = [];
+    //       for (let i = 0; i < localPlayerNames.length; i++) {
+    //         if (!playerNames.includes(localPlayerNames[i])) {
+    //           deletedPlayers.push(localPlayerNames[i]);
+    //         }
+    //       }
 
-          // delete players on local storage
-          if (deletedPlayers.length > 0) {
-            let values = "";
-            let deleteQuery = "delete from player where name in (";
-            for (let i = 0; i < deletedPlayers.length - 1; i++) {
-              values += "'" + deletedPlayers[i] + "',";
-            }
-            values += "'" + deletedPlayers[deletedPlayers.length - 1] + "')";
-            deleteQuery += values;
-            // console.log(deleteQuery);
-            await new Promise((resolve, reject) => {
-              db.transaction((tx) => {
-                tx.executeSql(
-                  deleteQuery,
-                  [],
-                  (_, { rows: { _array } }) => {
-                    resolve(_array);
-                  },
-                  (_, error) => {
-                    reject(error);
-                  }
-                );
-              });
-            });
-          }
-        }
+    //       // delete players on local storage
+    //       if (deletedPlayers.length > 0) {
+    //         let values = "";
+    //         let deleteQuery = "delete from player where name in (";
+    //         for (let i = 0; i < deletedPlayers.length - 1; i++) {
+    //           values += "'" + deletedPlayers[i] + "',";
+    //         }
+    //         values += "'" + deletedPlayers[deletedPlayers.length - 1] + "')";
+    //         deleteQuery += values;
+    //         // console.log(deleteQuery);
+    //         await new Promise((resolve, reject) => {
+    //           db.transaction((tx) => {
+    //             tx.executeSql(
+    //               deleteQuery,
+    //               [],
+    //               (_, { rows: { _array } }) => {
+    //                 resolve(_array);
+    //               },
+    //               (_, error) => {
+    //                 reject(error);
+    //               }
+    //             );
+    //           });
+    //         });
+    //       }
+    //     }
 
-        return response.data;
-      })
-      .catch(function (error) {
-        // console.log(error);
-      });
+    //     return response.data;
+    //   })
+    //   .catch(function (error) {
+    //     // console.log(error);
+    //   });
 
     // console.log(players);
 
@@ -389,21 +389,21 @@ const RecordGame = ({ route, navigation }) => {
     //   console.log("no new players");
     // }
 
-    new Promise((resolve, reject) => {
-      db.transaction((tx) => {
-        tx.executeSql(
-          "select * from actionPerformed where gameTimestamp = ? and opponent = ? and point >= 0",
-          [route.params.timestamp, route.params.opponent],
-          (_, { rows: { _array } }) => {
-            resolve(_array);
-            // console.log(_array);
-          },
-          (_, error) => {
-            reject(error);
-          }
-        );
-      });
-    });
+    // new Promise((resolve, reject) => {
+    //   db.transaction((tx) => {
+    //     tx.executeSql(
+    //       "select * from actionPerformed where gameTimestamp = ? and opponent = ? and point >= 0",
+    //       [route.params.timestamp, route.params.opponent],
+    //       (_, { rows: { _array } }) => {
+    //         resolve(_array);
+    //         // console.log(_array);
+    //       },
+    //       (_, error) => {
+    //         reject(error);
+    //       }
+    //     );
+    //   });
+    // });
 
     checkActionsPerformed();
   }
@@ -938,7 +938,24 @@ const RecordGame = ({ route, navigation }) => {
     };
     setPreviousActionState(previousAction.current);
     setPlayerInPossession(-1);
+    let updateQuery =
+      "update game set myScore = ? where timestamp = ? and opponent = ?";
+    let updateValues = [myScore + 1, route.params.timestamp, opponent];
+    db.transaction((tx) => {
+      tx.executeSql(
+        updateQuery,
+        updateValues,
+        (_, { rows: { _array } }) => {
+          // console.log(_array);
+        },
+        (_, error) => {
+          console.log(error);
+        }
+      );
+    });
     setMyScore(myScore + 1);
+    // update game table to reflect score
+
     let text = null;
     if (Boolean(route.params.startOffence) === true) {
       text = "defence";
@@ -1146,6 +1163,21 @@ const RecordGame = ({ route, navigation }) => {
       associatedPlayer: associatedPlayer,
     };
     setPreviousActionState(previousAction.current);
+    let updateQuery =
+      "update game set myScore = ? where timestamp = ? and opponent = ?";
+    let updateValues = [mys + 1, route.params.timestamp, opponent];
+    db.transaction((tx) => {
+      tx.executeSql(
+        updateQuery,
+        updateValues,
+        (_, { rows: { _array } }) => {
+          // console.log(_array);
+        },
+        (_, error) => {
+          console.log(error);
+        }
+      );
+    });
     setMyScore(mys + 1);
     let text = null;
     if (Boolean(route.params.startOffence) === true) {
@@ -1275,6 +1307,22 @@ const RecordGame = ({ route, navigation }) => {
       associatedPlayer: associatedPlayer,
     };
     setPreviousActionState(previousAction.current);
+    let updateQuery =
+      "update game set theirScore = ? where timestamp = ? and opponent = ?";
+    let updateValues = [theirs + 1, route.params.timestamp, opponent];
+    db.transaction((tx) => {
+      tx.executeSql(
+        updateQuery,
+        updateValues,
+        (_, { rows: { _array } }) => {
+          // console.log(_array);
+        },
+        (_, error) => {
+          console.log(error);
+        }
+      );
+    });
+
     setTheirScore(theirs + 1);
 
     let text = null;
@@ -1647,6 +1695,21 @@ const RecordGame = ({ route, navigation }) => {
             }
           );
         });
+        let updateQuery =
+          "update game set myScore = ? where timestamp = ? and opponent = ?";
+        let updateValues = [myScore - 1, route.params.timestamp, opponent];
+        db.transaction((tx) => {
+          tx.executeSql(
+            updateQuery,
+            updateValues,
+            (_, { rows: { _array } }) => {
+              // console.log(_array);
+            },
+            (_, error) => {
+              console.log(error);
+            }
+          );
+        });
         setMyScore(myScore - 1);
         if (lastAction.action === "Score") {
           let possession = lastAction.associatedPlayer;
@@ -1667,6 +1730,21 @@ const RecordGame = ({ route, navigation }) => {
               // console.log(results["rows"]["_array"]);
             },
             (tx, error) => {
+              console.log(error);
+            }
+          );
+        });
+        let updateQuery =
+          "update game set myScore = ? where timestamp = ? and opponent = ?";
+        let updateValues = [theirScore - 1, route.params.timestamp, opponent];
+        db.transaction((tx) => {
+          tx.executeSql(
+            updateQuery,
+            updateValues,
+            (_, { rows: { _array } }) => {
+              // console.log(_array);
+            },
+            (_, error) => {
               console.log(error);
             }
           );
