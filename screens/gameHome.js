@@ -7,7 +7,8 @@ import CheckBox from "expo-checkbox";
 import * as SQLite from "expo-sqlite";
 import axios from "axios";
 
-const ip = "http://192.168.1.4";
+// const ip = "http://192.168.1.4:3000";
+const ip = "https://mayhembackend.onrender.com";
 
 let mayhemLogo = require("../assets/logo.png");
 let allImages = {
@@ -37,11 +38,31 @@ const GameHome = ({ route, navigation }) => {
     theirScore,
   } = route.params.game;
 
-  let timeStamp = new Date(timestamp);
+  let year = timestamp.substring(0, 4);
+  let month = timestamp.split("-")[1];
+  let day = timestamp.split("-")[2];
+  day = day.split(" ")[0];
+  let time = timestamp.split(" ")[1];
+  let hour = time.split(":")[0];
+  let minute = time.split(":")[1];
+  let second = time.split(":")[2];
+  let timeStamp = new Date(year, month - 1, day, hour, minute, second);
+
   let timeStr =
-    timeStamp.toDateString().split(" ").slice(1, 3).join(" ") +
-    " - " +
-    timeStamp.toLocaleTimeString().split(":").slice(0, 2).join(":");
+    timeStamp.getFullYear() +
+    "-" +
+    (timeStamp.getMonth() + 1) +
+    "-" +
+    timeStamp.getDate() +
+    " " +
+    timeStamp.getHours() +
+    ":" +
+    timeStamp.getMinutes() +
+    ":" +
+    timeStamp.getSeconds();
+
+  // console.log("str", timeStr);
+  // console.log("ts", timestamp);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
   function changeCheckbox() {
@@ -56,16 +77,20 @@ const GameHome = ({ route, navigation }) => {
   async function onCheckboxChange(newValue) {
     setToggleCheckBox(newValue);
 
-    let timeStamp = new Date(timestamp);
-    // timeStr to be used in sql query
-    let timeStr =
-      timeStamp.getFullYear() +
-      "-" +
-      (timeStamp.getMonth() + 1) +
-      "-" +
-      timeStamp.getDate() +
-      " " +
-      timeStamp.toLocaleTimeString().split(":").slice(0, 3).join(":");
+    // let timeStamp = new Date(timestamp);
+    // // timeStr to be used in sql query
+    // let timeStr =
+    //   timeStamp.getFullYear() +
+    //   "-" +
+    //   (timeStamp.getMonth() + 1) +
+    //   "-" +
+    //   timeStamp.getDate() +
+    //   " " +
+    //   timeStamp.getHours() +
+    //   ":" +
+    //   timeStamp.getMinutes() +
+    //   ":" +
+    //   timeStamp.getSeconds();
 
     console.log(timeStr);
     await db.transaction((tx) => {
@@ -88,7 +113,7 @@ const GameHome = ({ route, navigation }) => {
 
     await axios({
       method: "put",
-      url: ip + ":3000/gameUpdateOffence",
+      url: ip + "/gameUpdateOffence",
       data: {
         timestamp: timeStr,
         opponent: opponent,
@@ -162,7 +187,15 @@ const GameHome = ({ route, navigation }) => {
       "-" +
       timeStamp.getDate() +
       " " +
-      timeStamp.toLocaleTimeString().split(":").slice(0, 3).join(":");
+      timeStamp.getHours() +
+      ":" +
+      timeStamp.getMinutes() +
+      ":" +
+      timeStamp.getSeconds();
+
+    // console.log(timeStr);
+
+    // console.log(opponent);
 
     db.transaction((tx) => {
       tx.executeSql(
@@ -188,11 +221,12 @@ const GameHome = ({ route, navigation }) => {
     db.transaction((tx) => {
       tx.executeSql(
         `
-        SELECT COUNT(*) FROM actionPerformed WHERE timestamp = "${timeStr}" AND opponent = "${opponent}";
+        SELECT COUNT(*) FROM actionPerformed WHERE gameTimestamp = "${timeStr}" AND opponent = "${opponent}" AND action != 'In Point';
         `,
         null,
         (tx, results) => {
           // console.log("Query completed");
+          // console.log(results.rows._array);
 
           if (results.rows._array[0]["COUNT(*)"] !== 0) {
             setIsCheckboxDisabled(true);
@@ -258,7 +292,15 @@ const GameHome = ({ route, navigation }) => {
           }
           text={"Start/Continue Recording"}
         />
-        <MyButton text={"View Events"} />
+        <MyButton
+          onPress={() =>
+            navigation.navigate("View Game Events", {
+              opponent: opponent,
+              timestamp: timeStr,
+            })
+          }
+          text={"View Events"}
+        />
         <MyButton text={"View Stats"} />
       </View>
     </View>

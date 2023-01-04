@@ -14,7 +14,8 @@ import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-native-modal";
 import axios from "axios";
 import * as SQLite from "expo-sqlite";
-const ip = "http://192.168.1.4";
+// const ip = "http://192.168.1.4:3000";
+const ip = "https://mayhembackend.onrender.com/";
 
 let mayhemLogo = require("../assets/logo.png");
 let allImages = {
@@ -76,6 +77,10 @@ const RecordGame = ({ route, navigation }) => {
 
   const previousAction = useRef([]);
   const beforePreviousAction = useRef([]);
+  const [previousActionState, setPreviousActionState] = useState([]);
+  const [beforePreviousActionState, setBeforePreviousActionState] = useState(
+    []
+  );
   const [playerInPossession, setPlayerInPossession] = useState(-1);
   const allActionsPerformed = useRef([]);
   const [heightPlayers, setHeightPlayers] = useState(0);
@@ -96,8 +101,13 @@ const RecordGame = ({ route, navigation }) => {
     let actions = await new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          "select * from actionPerformed where playerName = ? and gameTimestamp = ? and opponent = ?",
-          [player, route.params.timestamp, route.params.opponent],
+          "select * from actionPerformed where playerName = ? and gameTimestamp = ? and opponent = ? and point = ?",
+          [
+            player,
+            route.params.timestamp,
+            route.params.opponent,
+            myScore + theirScore + 1,
+          ],
           (_, { rows: { _array } }) => {
             resolve(_array);
             return _array;
@@ -109,6 +119,9 @@ const RecordGame = ({ route, navigation }) => {
       });
     });
 
+    actions = actions.filter((action) => {
+      return action.action !== "In Point";
+    });
     if (actions.length > 1) {
       console.log("player performed actions");
       return;
@@ -229,24 +242,6 @@ const RecordGame = ({ route, navigation }) => {
 
   async function getAllPlayers() {
     // use mysql to get all players
-    let players = await axios({
-      method: "get",
-      url: ip + ":3000/players",
-    }).then(function (response) {
-      return response.data;
-    });
-
-    let playerNames = players.map((player) => {
-      return player.name;
-    });
-
-    allPlayers.current = playerNames;
-    // await setAllPlayers(playerNames);
-    setPlayersOnBench(
-      playerNames.filter((player) => {
-        return !playersOnCourt.includes(player);
-      })
-    );
 
     let localPlayers = await new Promise((resolve, reject) => {
       db.transaction((tx) => {
@@ -268,105 +263,133 @@ const RecordGame = ({ route, navigation }) => {
       return player.name;
     });
 
+    allPlayers.current = localPlayerNames;
+    // await setAllPlayers(playerNames);
+    setPlayersOnBench(
+      localPlayerNames.filter((player) => {
+        return !playersOnCourt.includes(player);
+      })
+    );
+
+    axios({
+      method: "get",
+      url: ip + "/players",
+    })
+      .then(async function (response) {
+        let players = response.data;
+        if (players !== undefined) {
+          let playerNames = players.map((player) => {
+            return player.name;
+          });
+          let newPlayers = [];
+          let dirty = false;
+          for (let i = 0; i < playerNames.length; i++) {
+            if (!localPlayerNames.includes(playerNames[i])) {
+              {
+                newPlayers.push(players[i]);
+                dirty = true;
+              }
+            }
+          }
+
+          // create values string
+          if (dirty) {
+            let values = "";
+            for (let i = 0; i < newPlayers.length - 1; i++) {
+              values +=
+                "('" +
+                newPlayers[i].name +
+                "', '" +
+                newPlayers[i].email +
+                "', '" +
+                newPlayers[i].major +
+                "', '" +
+                newPlayers[i].number +
+                "', '" +
+                newPlayers[i].phone +
+                "'),";
+            }
+
+            values +=
+              "('" +
+              newPlayers[newPlayers.length - 1].name +
+              "', '" +
+              newPlayers[newPlayers.length - 1].email +
+              "', '" +
+              newPlayers[newPlayers.length - 1].major +
+              "', '" +
+              newPlayers[newPlayers.length - 1].number +
+              "', '" +
+              newPlayers[newPlayers.length - 1].phone +
+              "')";
+
+            // add new players to local storage
+            // console.log(values);
+            await new Promise((resolve, reject) => {
+              db.transaction((tx) => {
+                tx.executeSql(
+                  "insert into player (name, email, major, number, phone) values " +
+                    values,
+                  [],
+                  (_, { rows: { _array } }) => {
+                    resolve(_array);
+                  },
+                  (_, error) => {
+                    reject(error);
+                  }
+                );
+              });
+            });
+          }
+
+          // see if a player is deleted on mysql
+          let deletedPlayers = [];
+          for (let i = 0; i < localPlayerNames.length; i++) {
+            if (!playerNames.includes(localPlayerNames[i])) {
+              deletedPlayers.push(localPlayerNames[i]);
+            }
+          }
+
+          // delete players on local storage
+          if (deletedPlayers.length > 0) {
+            let values = "";
+            let deleteQuery = "delete from player where name in (";
+            for (let i = 0; i < deletedPlayers.length - 1; i++) {
+              values += "'" + deletedPlayers[i] + "',";
+            }
+            values += "'" + deletedPlayers[deletedPlayers.length - 1] + "')";
+            deleteQuery += values;
+            // console.log(deleteQuery);
+            await new Promise((resolve, reject) => {
+              db.transaction((tx) => {
+                tx.executeSql(
+                  deleteQuery,
+                  [],
+                  (_, { rows: { _array } }) => {
+                    resolve(_array);
+                  },
+                  (_, error) => {
+                    reject(error);
+                  }
+                );
+              });
+            });
+          }
+        }
+
+        return response.data;
+      })
+      .catch(function (error) {
+        // console.log(error);
+      });
+
+    // console.log(players);
+
     // if (localPlayerNames.length === playerNames.length) {
     //   console.log("no new players");
     // }
-    let newPlayers = [];
-    let dirty = false;
-    for (let i = 0; i < playerNames.length; i++) {
-      if (!localPlayerNames.includes(playerNames[i])) {
-        {
-          newPlayers.push(players[i]);
-          dirty = true;
-        }
-      }
-    }
 
-    // create values string
-    if (dirty) {
-      let values = "";
-      for (let i = 0; i < newPlayers.length - 1; i++) {
-        values +=
-          "('" +
-          newPlayers[i].name +
-          "', '" +
-          newPlayers[i].email +
-          "', '" +
-          newPlayers[i].major +
-          "', '" +
-          newPlayers[i].number +
-          "', '" +
-          newPlayers[i].phone +
-          "'),";
-      }
-
-      values +=
-        "('" +
-        newPlayers[newPlayers.length - 1].name +
-        "', '" +
-        newPlayers[newPlayers.length - 1].email +
-        "', '" +
-        newPlayers[newPlayers.length - 1].major +
-        "', '" +
-        newPlayers[newPlayers.length - 1].number +
-        "', '" +
-        newPlayers[newPlayers.length - 1].phone +
-        "')";
-
-      // add new players to local storage
-      // console.log(values);
-      await new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-          tx.executeSql(
-            "insert into player (name, email, major, number, phone) values " +
-              values,
-            [],
-            (_, { rows: { _array } }) => {
-              resolve(_array);
-            },
-            (_, error) => {
-              reject(error);
-            }
-          );
-        });
-      });
-    }
-
-    // see if a player is deleted on mysql
-    let deletedPlayers = [];
-    for (let i = 0; i < localPlayerNames.length; i++) {
-      if (!playerNames.includes(localPlayerNames[i])) {
-        deletedPlayers.push(localPlayerNames[i]);
-      }
-    }
-
-    // delete players on local storage
-    if (deletedPlayers.length > 0) {
-      let values = "";
-      let deleteQuery = "delete from player where name in (";
-      for (let i = 0; i < deletedPlayers.length - 1; i++) {
-        values += "'" + deletedPlayers[i] + "',";
-      }
-      values += "'" + deletedPlayers[deletedPlayers.length - 1] + "')";
-      deleteQuery += values;
-      // console.log(deleteQuery);
-      await new Promise((resolve, reject) => {
-        db.transaction((tx) => {
-          tx.executeSql(
-            deleteQuery,
-            [],
-            (_, { rows: { _array } }) => {
-              resolve(_array);
-            },
-            (_, error) => {
-              reject(error);
-            }
-          );
-        });
-      });
-    }
-
-    await new Promise((resolve, reject) => {
+    new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
           "select * from actionPerformed where gameTimestamp = ? and opponent = ? and point >= 0",
@@ -408,13 +431,20 @@ const RecordGame = ({ route, navigation }) => {
       setModalVisible(false);
       // get only actions where action = 'Score' or 'They Score'
       let scoringActions = actionsPerformed.filter((action) => {
-        return action.action === "Score" || action.action === "They Score";
+        return (
+          action.action === "Score" ||
+          action.action === "They Score" ||
+          action.action === "Callahan"
+        );
       });
       var mypoints = 0;
       var theirpoints = 0;
       let x = Boolean(route.params.startOffence);
       for (let i = 0; i < scoringActions.length; i++) {
-        if (scoringActions[i].action === "Score") {
+        if (
+          scoringActions[i].action === "Score" ||
+          scoringActions[i].action === "Callahan"
+        ) {
           mypoints++;
           if (mypoints === 7) {
             x = !Boolean(route.params.startOffence);
@@ -578,10 +608,13 @@ const RecordGame = ({ route, navigation }) => {
       allActionsPerformed.current = actions;
       if (actions.length === 1) {
         previousAction.current = actions[actions.length - 1];
+        setPreviousActionState(actions[actions.length - 1]);
       }
       if (actions.length > 1) {
         previousAction.current = actions[actions.length - 1];
+        setPreviousActionState(actions[actions.length - 1]);
         beforePreviousAction.current = actions[actions.length - 2];
+        setBeforePreviousActionState(actions[actions.length - 2]);
       }
 
       // get all actions in the current point
@@ -606,17 +639,19 @@ const RecordGame = ({ route, navigation }) => {
 
       setOnOffense(x);
 
-      if (currentPointActions.length > 1 && x === true) {
-        console.log("actions", currentPointActions);
-        console.log(
-          "player",
-          currentPointActions[currentPointActions.length - 1].player
-        );
+      if (currentPointActions.length >= 1 && x === true) {
+        // console.log("actions", currentPointActions);
+        // console.log(
+        //   "player",
+        //   inCourt.indexOf(
+        //     currentPointActions[currentPointActions.length - 1].player
+        //   )
+        // );
         setPlayerInPossession(
-          playersOnCourt.indexOf(
+          inCourt.indexOf(
             currentPointActions[currentPointActions.length - 1].player
-          ),
-          console.log("playerInPossession", playerInPossession)
+          )
+          // console.log("playerInPossession", playerInPossession)
         );
       }
     } else {
@@ -768,6 +803,7 @@ const RecordGame = ({ route, navigation }) => {
     setOnOffense(!onOffense);
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Drop",
       player: playerName,
@@ -780,6 +816,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
     setPlayerInPossession(-1);
   }
 
@@ -826,6 +863,7 @@ const RecordGame = ({ route, navigation }) => {
     });
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Catch",
       player: playerName,
@@ -838,6 +876,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
     setPlayerInPossession(index);
   }
 
@@ -884,6 +923,7 @@ const RecordGame = ({ route, navigation }) => {
     });
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Score",
       player: playerName,
@@ -896,6 +936,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
     setPlayerInPossession(-1);
     setMyScore(myScore + 1);
     let text = null;
@@ -983,6 +1024,7 @@ const RecordGame = ({ route, navigation }) => {
     });
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Deep",
       player: playerName,
@@ -995,6 +1037,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
     setPlayerInPossession(index);
   }
 
@@ -1039,6 +1082,7 @@ const RecordGame = ({ route, navigation }) => {
     setOnOffense(!onOffense);
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Throwaway",
       player: playerName,
@@ -1051,6 +1095,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
     setPlayerInPossession(-1);
   }
 
@@ -1087,6 +1132,7 @@ const RecordGame = ({ route, navigation }) => {
     setPlayerInPossession(-1);
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Callahan",
       player: playerName,
@@ -1099,6 +1145,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
     setMyScore(mys + 1);
     let text = null;
     if (Boolean(route.params.startOffence) === true) {
@@ -1170,6 +1217,7 @@ const RecordGame = ({ route, navigation }) => {
     setPlayerInPossession(-1);
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Their Throwaway",
       player: playerName,
@@ -1182,6 +1230,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
   }
 
   function theirGoal() {
@@ -1212,6 +1261,7 @@ const RecordGame = ({ route, navigation }) => {
     setPlayerInPossession(-1);
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "They Score",
       player: playerName,
@@ -1224,6 +1274,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
     setTheirScore(theirs + 1);
 
     let text = null;
@@ -1302,6 +1353,7 @@ const RecordGame = ({ route, navigation }) => {
     setPlayerInPossession(-1);
 
     beforePreviousAction.current = previousAction.current;
+    setBeforePreviousActionState(previousAction.current);
     allActionsPerformed.current.push({
       action: "Defence",
       player: playerName,
@@ -1314,6 +1366,7 @@ const RecordGame = ({ route, navigation }) => {
       point: point,
       associatedPlayer: associatedPlayer,
     };
+    setPreviousActionState(previousAction.current);
   }
   function playerPickup(index) {
     setPlayerInPossession(index);
@@ -1500,33 +1553,127 @@ const RecordGame = ({ route, navigation }) => {
       let lastAction = actions[actions.length - 1];
       console.log(lastAction);
       //delete action from local storage
-      db.transaction((tx) => {
-        tx.executeSql(
-          `select id from actionPerformed 
-            where gameTimestamp = ? AND opponent = ? AND action = ? AND playerName = ? AND point = ? ORDER BY id DESC LIMIT 1;`,
-          [
-            gameTimestamp,
-            opponent,
-            lastAction.action,
-            lastAction.playerName,
-            lastAction.point,
-          ],
-          (tx, results) => {
-            console.log(results);
-          },
-          (tx, error) => {
-            console.log(error);
-          }
-        );
-      });
+      if (
+        lastAction.action === "Their Throwaway" ||
+        lastAction.action === "They Score"
+      ) {
+        db.transaction((tx) => {
+          tx.executeSql(
+            `DELETE FROM actionPerformed WHERE id in (select id from actionPerformed 
+              where gameTimestamp = ? AND opponent = ? AND action = ? AND point = ? ORDER BY id DESC LIMIT 1);`,
+            [gameTimestamp, opponent, lastAction.action, lastAction.point],
+            (tx, results) => {
+              // console.log(results["rows"]["_array"]);
+            },
+            (tx, error) => {
+              console.log(error);
+            }
+          );
+        });
+      } else {
+        db.transaction((tx) => {
+          tx.executeSql(
+            `DELETE FROM actionPerformed WHERE id in (select id from actionPerformed 
+              where gameTimestamp = ? AND opponent = ? AND action = ? AND playerName = ? AND point = ? ORDER BY id DESC LIMIT 1);`,
+            [
+              gameTimestamp,
+              opponent,
+              lastAction.action,
+              lastAction.player,
+              lastAction.point,
+            ],
+            (tx, results) => {
+              // console.log(results["rows"]["_array"]);
+            },
+            (tx, error) => {
+              console.log(error);
+            }
+          );
+        });
+      }
 
       let newActions = actions.slice(0, actions.length - 1);
       allActionsPerformed.current = newActions;
       if (newActions.length === 1) {
         previousAction.current = newActions[0];
+        beforePreviousAction.current = null;
+        setPreviousActionState(newActions[0]);
+        setBeforePreviousActionState(null);
       } else if (newActions.length > 1) {
         previousAction.current = newActions[newActions.length - 1];
         beforePreviousAction.current = newActions[newActions.length - 2];
+        setPreviousActionState(newActions[newActions.length - 1]);
+        setBeforePreviousActionState(newActions[newActions.length - 2]);
+      } else if (newActions.length === 0) {
+        previousAction.current = null;
+        beforePreviousAction.current = null;
+        setPreviousActionState(null);
+        setBeforePreviousActionState(null);
+      }
+
+      if (lastAction.action === "Catch" || lastAction.action === "Deep") {
+        let possession = lastAction.associatedPlayer;
+        setPlayerInPossession(playersOnCourt.indexOf(possession));
+      } else if (lastAction.action === "Drop") {
+        let possession = lastAction.associatedPlayer;
+        setPlayerInPossession(playersOnCourt.indexOf(possession));
+        setOnOffense(true);
+      } else if (lastAction.action === "Throwaway") {
+        let possession = lastAction.player;
+        setPlayerInPossession(playersOnCourt.indexOf(possession));
+        setOnOffense(true);
+      } else if (lastAction.action === "Defence") {
+        setPlayerInPossession(-1);
+        setOnOffense(false);
+      } else if (lastAction.action === "Their Throwaway") {
+        setPlayerInPossession(-1);
+        setOnOffense(false);
+      } else if (
+        lastAction.action === "Callahan" ||
+        lastAction.action === "Score"
+      ) {
+        var curpoint = lastAction.point;
+        // delete all actions of next point from local storage
+        db.transaction((tx) => {
+          tx.executeSql(
+            `DELETE FROM actionPerformed WHERE id in (select id from actionPerformed  
+              where gameTimestamp = ? AND opponent = ? AND point = ?);`,
+            [gameTimestamp, opponent, curpoint + 1],
+            (tx, results) => {
+              // console.log(results["rows"]["_array"]);
+            },
+            (tx, error) => {
+              console.log(error);
+            }
+          );
+        });
+        setMyScore(myScore - 1);
+        if (lastAction.action === "Score") {
+          let possession = lastAction.associatedPlayer;
+          setPlayerInPossession(playersOnCourt.indexOf(possession));
+          setOnOffense(true);
+        } else {
+          setPlayerInPossession(-1);
+          setOnOffense(false);
+        }
+      } else if (lastAction.action === "They Score") {
+        var curpoint = lastAction.point;
+        db.transaction((tx) => {
+          tx.executeSql(
+            `DELETE FROM actionPerformed WHERE id in (select id from actionPerformed  
+              where gameTimestamp = ? AND opponent = ? AND point = ?);`,
+            [gameTimestamp, opponent, curpoint + 1],
+            (tx, results) => {
+              // console.log(results["rows"]["_array"]);
+            },
+            (tx, error) => {
+              console.log(error);
+            }
+          );
+        });
+        setTheirScore(theirScore - 1);
+        setPlayerInPossession(-1);
+        setOnOffense(false);
       }
     }
   }
@@ -1596,10 +1743,16 @@ const RecordGame = ({ route, navigation }) => {
   }
 
   function renderPreviousPlays(priority) {
-    let prev = previousAction.current;
+    if (previousActionState === null) {
+      return <View></View>;
+    }
+    let prev = previousActionState;
     let textStyle = { color: "#000" };
     if (priority === 1) {
-      prev = beforePreviousAction.current;
+      if (beforePreviousActionState === null) {
+        return <View></View>;
+      }
+      prev = beforePreviousActionState;
       textStyle = { color: "#808080" };
     }
     let image = allActionImages[prev["action"]];

@@ -14,14 +14,17 @@ import PLayerItem from "../components/playerItem";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import * as SQLite from "expo-sqlite";
-const ip = "http://192.168.1.4";
+// import Keyboard
+import { Keyboard } from "react-native";
+// const ip = "http://192.168.1.4:3000";
+const ip = "https://mayhembackend.onrender.com";
 
 const db = SQLite.openDatabase("game.db");
 
 async function addPlayerToDB(name, email, major, number, phone) {
   await axios({
     method: "post",
-    url: ip + ":3000/players",
+    url: ip + "/players",
     data: {
       email: email,
       major: major,
@@ -56,7 +59,7 @@ const AddPlayer = () => {
     // use mysql to get all players
     let players = await axios({
       method: "get",
-      url: ip + ":3000/players",
+      url: ip + "/players",
     }).then(function (response) {
       return response.data;
     });
@@ -200,7 +203,7 @@ const AddPlayer = () => {
           onPress: async () => {
             await axios({
               method: "delete",
-              url: ip + ":3000/players/" + playerName,
+              url: ip + "/players/" + playerName,
             })
               .then(function (response) {
                 return response.data;
@@ -300,7 +303,9 @@ const AddPlayer = () => {
 
   const onScreenLoad = async () => {
     try {
+      console.log("onScreenLoad");
       var playersInfo = await getPlayers();
+      console.log("got players");
       var playerNames = playerInfotoNames(playersInfo);
       setPlayers(playerNames);
     } catch (err) {

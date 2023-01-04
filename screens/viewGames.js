@@ -6,7 +6,8 @@ import React, { useEffect, useState } from "react";
 import GameItem from "../components/gameItem";
 import * as SQLite from "expo-sqlite";
 
-const ip = "192.168.1.4";
+// const ip = "http://192.168.1.4:3000";
+const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
 async function getGames() {
@@ -79,9 +80,7 @@ const ViewGames = ({ navigation }) => {
       ":" +
       date.getSeconds();
     await axios
-      .delete(
-        "http://" + ip + ":3000/game/" + item.opponent + "/" + timestampStr
-      )
+      .delete(ip + "/game/" + item.opponent + "/" + timestampStr)
       .then((response) => {
         console.log(response.data);
         onScreenLoad();
