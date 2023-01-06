@@ -17,9 +17,12 @@
     "expo-checkbox": "~2.2.2",
     "expo-sqlite": "~11.0.0",
     "expo-status-bar": "~1.4.2",
+    "lottie-react-native": "^5.1.4",
+    "prop-types": "^15.8.1",
     "react": "18.1.0",
     "react-native": "0.70.5",
     "react-native-animated-loader": "^1.0.0",
+    "react-native-chart-kit": "^6.12.0",
     "react-native-dropdown-listpicker": "^1.1.4",
     "react-native-dropdown-menu": "^2.0.0",
     "react-native-dropdown-select-list": "^2.0.4",
@@ -30,7 +33,8 @@
     "react-native-searchable-dropdown-custom": "^1.0.0",
     "react-native-segmented-picker": "^2.0.2",
     "react-redux": "^8.0.5",
-    "redux": "^4.2.0"
+    "redux": "^4.2.0",
+    "react-native-svg": "13.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

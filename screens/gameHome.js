@@ -16,7 +16,8 @@ import React, { useEffect, useRef, useState } from "react";
 import CheckBox from "expo-checkbox";
 import * as SQLite from "expo-sqlite";
 import axios from "axios";
-import AnimatedLoader from "react-native-animated-loader";
+// import AnimatedLoader from "react-native-animated-loader";
+import LottieView from "lottie-react-native";
 
 // const ip = "http://192.168.1.4:3000";
 const ip = "https://mayhembackend.onrender.com";
@@ -123,11 +124,26 @@ const GameHome = ({ route, navigation }) => {
       );
     });
 
+    let axiosTimeStamp = new Date(year, month - 1, day, hour, minute, second);
+    axiosTimeStamp.setHours(axiosTimeStamp.getHours() - 2);
+    let axiosTimeStr =
+      axiosTimeStamp.getFullYear() +
+      "-" +
+      (axiosTimeStamp.getMonth() + 1) +
+      "-" +
+      axiosTimeStamp.getDate() +
+      " " +
+      axiosTimeStamp.getHours() +
+      ":" +
+      axiosTimeStamp.getMinutes() +
+      ":" +
+      axiosTimeStamp.getSeconds();
+
     axios({
       method: "put",
       url: ip + "/gameUpdateOffence",
       data: {
-        timestamp: timeStr,
+        timestamp: axiosTimeStr,
         opponent: opponent,
         newValue: newValue,
       },
@@ -301,29 +317,43 @@ const GameHome = ({ route, navigation }) => {
     // first delete all records for this game on the server
     setVisible(true);
     isSuccessfull.current = true;
+    let axiosTimeStamp = new Date(year, month - 1, day, hour, minute, second);
+    axiosTimeStamp.setHours(axiosTimeStamp.getHours() - 2);
+    let axiosTimeStr =
+      axiosTimeStamp.getFullYear() +
+      "-" +
+      (axiosTimeStamp.getMonth() + 1) +
+      "-" +
+      axiosTimeStamp.getDate() +
+      " " +
+      axiosTimeStamp.getHours() +
+      ":" +
+      axiosTimeStamp.getMinutes() +
+      ":" +
+      axiosTimeStamp.getSeconds();
     await axios({
       method: "delete",
-      url: ip + "/game/" + opponent + "/" + timestamp,
+      url: ip + "/game/" + opponent + "/" + axiosTimeStr,
       data: {},
     })
       .then(function (response) {
         // console.log(response);
       })
       .catch(function (error) {
-        // console.warn(error);
+        console.log("error3: ", error);
         doneUpload(0);
         isSuccessfull.current = false;
       });
     await axios({
       method: "delete",
-      url: ip + "/gameActions/" + opponent + "/" + timestamp,
+      url: ip + "/gameActions/" + opponent + "/" + axiosTimeStr,
       data: {},
     })
       .then(function (response) {
         // console.log(response);
       })
       .catch(function (error) {
-        // console.warn(error);
+        console.warn(error);
         doneUpload(0);
         isSuccessfull.current = false;
       });
@@ -342,7 +372,7 @@ const GameHome = ({ route, navigation }) => {
             resolve(results.rows._array[0]);
           },
           (tx, error) => {
-            // console.warn("Error: " + error);
+            console.log("Error2: " + error);
             doneUpload(0);
             isSuccessfull.current = false;
           }
@@ -356,7 +386,7 @@ const GameHome = ({ route, navigation }) => {
       url: ip + "/gameDetails",
       data: {
         opponent: gameDetails.opponent,
-        timestamp: gameDetails.timestamp,
+        timestamp: axiosTimeStr,
         myScore: gameDetails.myScore,
         theirScore: gameDetails.theirScore,
         isHome: gameDetails.home,
@@ -368,7 +398,7 @@ const GameHome = ({ route, navigation }) => {
         // console.log(response);
       })
       .catch(function (error) {
-        // console.warn(error);
+        console.log("post 2", error);
         doneUpload(0);
         isSuccessfull.current = false;
       });
@@ -387,7 +417,7 @@ const GameHome = ({ route, navigation }) => {
             resolve(results.rows._array);
           },
           (tx, error) => {
-            // console.warn("Error: " + error);
+            console.log("Error: " + error);
             doneUpload(0);
             isSuccessfull.current = false;
           }
@@ -397,19 +427,13 @@ const GameHome = ({ route, navigation }) => {
 
     let values = "";
     for (let i = 0; i < gameActions.length; i++) {
-      values +=
-        "('" + gameActions[i].opponent + "','" + gameActions[i].gameTimestamp;
+      values += "('" + gameActions[i].opponent + "','" + axiosTimeStr;
       if (gameActions[i].playerName !== null) {
         values += "','" + gameActions[i].playerName + "','";
       } else {
         values += "',null,'";
       }
-      values +=
-        gameActions[i].action +
-        "','" +
-        gameActions[i].point +
-        "','" +
-        gameActions[i].timestamp;
+      values += gameActions[i].action + "','" + gameActions[i].point;
       if (gameActions[i].associatedPlayer !== null) {
         values += "','" + gameActions[i].associatedPlayer + "'),";
       } else {
@@ -418,6 +442,9 @@ const GameHome = ({ route, navigation }) => {
     }
     values = values.slice(0, -1);
     // console.log(values);
+
+    // setVisible(false);
+    console.log(values);
 
     await axios({
       method: "post",
@@ -431,7 +458,7 @@ const GameHome = ({ route, navigation }) => {
       })
 
       .catch(function (error) {
-        // console.warn(error);
+        console.log("post", error);
         doneUpload(0);
         isSuccessfull.current = false;
       });
@@ -464,7 +491,13 @@ const GameHome = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ width: "100%", alignItems: "flex-end" }}>
+      <View
+        style={{
+          width: "100%",
+          alignItems: "flex-end",
+          // borderBottomWidth: 0.5,
+        }}
+      >
         <MyButton
           text={"Upload Game Online"}
           onPress={uploadGame}
@@ -501,11 +534,12 @@ const GameHome = ({ route, navigation }) => {
       {renderDetails()}
       <View
         style={{
+          // paddingTop: 20,
           width: "100%",
           alignItems: "center",
           flex: 1,
-          justifyContent: "flex-end",
-          marginBottom: 200,
+          justifyContent: "center",
+          marginBottom: 75,
         }}
       >
         <MyButton
@@ -536,16 +570,38 @@ const GameHome = ({ route, navigation }) => {
           }
           text={"View Stats"}
         />
+        <MyButton
+          onPress={() =>
+            navigation.navigate("View Player Stats", {
+              opponent: opponent,
+              timestamp: timeStr,
+            })
+          }
+          text={"Player Stats"}
+        />
       </View>
-      <AnimatedLoader
-        visible={visible}
-        overlayColor="rgba(255,255,255,0.3)"
-        animationStyle={styles.lottie}
-        speed={1}
-        source={require("../assets/loading.json")}
-      >
-        <Text>Uploading Game...</Text>
-      </AnimatedLoader>
+      {visible && (
+        <View
+          style={{
+            position: "absolute",
+            backgroundColor: "#fff",
+            opacity: 0.5,
+            backfaceVisibility: "visible",
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100,
+          }}
+        >
+          <LottieView
+            source={require("../assets/loading.json")}
+            style={styles.lottie}
+            autoPlay
+          />
+          <Text>Uploading Game...</Text>
+        </View>
+      )}
     </View>
   );
 };

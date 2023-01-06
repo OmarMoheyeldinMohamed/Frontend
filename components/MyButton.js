@@ -14,6 +14,7 @@ function MyButton(props) {
   let fontWeight = props.fontWeight ? props.fontWeight : "normal";
   let disabled = props.disabled ? props.disabled : false;
   var onPress = props.onPress;
+  let addNumber = props.addNumber ? props.addNumber : null;
 
   if (props.verticalPadding !== undefined) {
     padding = 1;
@@ -61,28 +62,71 @@ function MyButton(props) {
   //   ...buttonStyle,
   //   ...{ backgroundColor: color, padding: padding, margin: margin },
   // };
-  return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => pressed && styles.pressed}
-      flex={props.flex}
-    >
-      {/* View with button style and custom width */}
-      {/* Text with button text style and custom text */}
-      <View style={buttonStyle}>
-        {/* <View style={styles.button}> */}
-        <Text
-          style={{
-            color: textColor,
-            fontSize: textSize,
-            fontWeight: fontWeight,
-          }}
-        >
-          {props.text}
-        </Text>
-      </View>
-    </Pressable>
-  );
+  if (addNumber === null) {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => pressed && styles.pressed}
+        flex={props.flex}
+      >
+        {/* View with button style and custom width */}
+        {/* Text with button text style and custom text */}
+        <View style={buttonStyle}>
+          {/* <View style={styles.button}> */}
+          <Text
+            style={{
+              color: textColor,
+              fontSize: textSize,
+              fontWeight: fontWeight,
+            }}
+          >
+            {props.text}
+          </Text>
+        </View>
+      </Pressable>
+    );
+  } else {
+    return (
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => pressed && styles.pressed}
+        flex={props.flex}
+      >
+        {/* View with button style and custom width */}
+        {/* Text with button text style and custom text */}
+        <View style={buttonStyle}>
+          {/* <View style={styles.button}> */}
+          <Text
+            style={{
+              color: textColor,
+              fontSize: textSize,
+              fontWeight: fontWeight,
+            }}
+          >
+            {props.text}
+          </Text>
+          <View
+            style={{
+              position: "absolute",
+              justifyContent: "center",
+              alignContent: "center",
+              // alignSelf: "flex-end",
+              bottom: 3,
+              right: 5,
+              // backgroundColor: "#000",
+              zIndex: 100,
+            }}
+          >
+            <Text
+              style={{ fontSize: 10, color: textColor, fontWeight: fontWeight }}
+            >
+              {addNumber}
+            </Text>
+          </View>
+        </View>
+      </Pressable>
+    );
+  }
 }
 
 export default MyButton;

@@ -18,7 +18,8 @@ import Modal from "react-native-modal";
 import axios from "axios";
 import CheckBox from "expo-checkbox";
 import * as SQLite from "expo-sqlite";
-import AnimatedLoader from "react-native-animated-loader";
+// import AnimatedLoader from "react-native-animated-loader";
+import LottieView from "lottie-react-native";
 
 // const ip = "http://192.168.1.4:3000";
 const ip = "https://mayhembackend.onrender.com";
@@ -477,15 +478,27 @@ const AddGame = ({ navigation }) => {
           justifyContent="center"
         />
       </View>
-      <AnimatedLoader
-        visible={visible}
-        overlayColor="rgba(255,255,255,0.3)"
-        animationStyle={styles.lottie}
-        speed={1}
-        source={require("../assets/loading.json")}
-      >
-        <Text>Loading...</Text>
-      </AnimatedLoader>
+      {visible && (
+        <View
+          style={{
+            position: "absolute",
+            backgroundColor: "#fff",
+            opacity: 0.5,
+            backfaceVisibility: "visible",
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <LottieView
+            source={require("../assets/loading.json")}
+            style={styles.lottie}
+            autoPlay
+          />
+          <Text>Loading...</Text>
+        </View>
+      )}
     </View>
   );
 };

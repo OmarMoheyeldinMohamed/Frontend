@@ -250,7 +250,6 @@ const Home = ({ navigation }) => {
           action varchar(20) NOT NULL,
           id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
           point int NOT NULL,
-          timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
           associatedPlayer varchar(25) DEFAULT NULL,
           FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp) ON DELETE CASCADE,
           FOREIGN KEY (playerName) REFERENCES player (name),

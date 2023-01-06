@@ -14,9 +14,9 @@ import PLayerItem from "../components/playerItem";
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import * as SQLite from "expo-sqlite";
-// import Keyboard
 import { Keyboard } from "react-native";
-import AnimatedLoader from "react-native-animated-loader";
+// import AnimatedLoader from "react-native-animated-loader";
+import LottieView from "lottie-react-native";
 
 // const ip = "http://192.168.1.4:3000";
 const ip = "https://mayhembackend.onrender.com";
@@ -408,15 +408,37 @@ const AddPlayer = () => {
         ></FlatList>
       </View>
 
-      <AnimatedLoader
+      {/* <AnimatedLoader
         visible={visible}
         overlayColor="rgba(255,255,255,0.3)"
         animationStyle={styles.lottie}
         speed={1}
-        source={require("../assets/loading.json")}
+        // source={require("../assets/loading.json")}
       >
         <Text>Loading Players...</Text>
-      </AnimatedLoader>
+      </AnimatedLoader> */}
+
+      {visible && (
+        <View
+          style={{
+            position: "absolute",
+            backgroundColor: "#fff",
+            opacity: 0.5,
+            backfaceVisibility: "visible",
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <LottieView
+            source={require("../assets/loading.json")}
+            style={styles.lottie}
+            autoPlay
+          />
+          <Text>Loading Players...</Text>
+        </View>
+      )}
     </View>
   );
 };

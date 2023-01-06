@@ -85,6 +85,11 @@ const RecordGame = ({ route, navigation }) => {
   const allActionsPerformed = useRef([]);
   const [heightPlayers, setHeightPlayers] = useState(0);
   const [disableAllButtons, setDisableAllButtons] = useState(false);
+  const allPlayers = useRef([]);
+  // const [allPlayers, setAllPlayers] = useState([]);
+  const [playersOnBench, setPlayersOnBench] = useState([]);
+
+  const [playerPointsPlayed, setPlayerPointsPlayed] = useState([]);
 
   const unSelectPlayer = async (index) => {
     let newPlayersOnCourt = playersOnCourt.map((player) => {
@@ -140,6 +145,10 @@ const RecordGame = ({ route, navigation }) => {
     );
     setPlayersOnBench((players) => [...players, player]);
 
+    let newPlayerPointsPlayed = playerPointsPlayed;
+    newPlayerPointsPlayed[player] -= 1;
+    setPlayerPointsPlayed(newPlayerPointsPlayed);
+
     // delete from db that player is in point
     new Promise((resolve, reject) => {
       db.transaction((tx) => {
@@ -175,6 +184,10 @@ const RecordGame = ({ route, navigation }) => {
       return player;
     });
     newPlayersOnCourt[index] = player;
+
+    let newPlayerPointsPlayed = playerPointsPlayed;
+    newPlayerPointsPlayed[player] += 1;
+    setPlayerPointsPlayed(newPlayerPointsPlayed);
 
     setPlayersOnCourt(newPlayersOnCourt);
     // console.log(onModalOpenPlayersOnCourt);
@@ -217,9 +230,7 @@ const RecordGame = ({ route, navigation }) => {
       });
     });
   };
-  const allPlayers = useRef([]);
-  // const [allPlayers, setAllPlayers] = useState([]);
-  const [playersOnBench, setPlayersOnBench] = useState([]);
+
   function onCourtBackgroundColors(player) {
     if (player !== "open") {
       return "#119fb8";
@@ -440,6 +451,7 @@ const RecordGame = ({ route, navigation }) => {
       var mypoints = 0;
       var theirpoints = 0;
       let x = Boolean(route.params.startOffence);
+
       for (let i = 0; i < scoringActions.length; i++) {
         if (
           scoringActions[i].action === "Score" ||
@@ -517,6 +529,11 @@ const RecordGame = ({ route, navigation }) => {
 
       // go over all actions and add them to array of actions
       let actions = [];
+      let playersPointsPlayed = {};
+      for (let i = 0; i < allPlayers.current.length; i++) {
+        playersPointsPlayed[allPlayers.current[i]] = 0;
+      }
+
       for (let i = 0; i < actionsPerformed.length; i++) {
         let action = actionsPerformed[i];
         if (action.action === "Score") {
@@ -589,6 +606,7 @@ const RecordGame = ({ route, navigation }) => {
             point: action.point,
             associatedPlayer: action.associatedPlayer,
           });
+          playersPointsPlayed[action.playerName] += 1;
         } else if (action.action === "Callahan") {
           actions.push({
             action: "Callahan",
@@ -603,6 +621,8 @@ const RecordGame = ({ route, navigation }) => {
             point: action.point,
             associatedPlayer: null,
           });
+        } else if (action.action === "In Point") {
+          playersPointsPlayed[action.playerName] += 1;
         }
       }
       allActionsPerformed.current = actions;
@@ -616,6 +636,7 @@ const RecordGame = ({ route, navigation }) => {
         beforePreviousAction.current = actions[actions.length - 2];
         setBeforePreviousActionState(actions[actions.length - 2]);
       }
+      setPlayerPointsPlayed(playersPointsPlayed);
 
       // get all actions in the current point
       let currentPointActions = actions.filter((action) => {
@@ -752,6 +773,9 @@ const RecordGame = ({ route, navigation }) => {
             }
           );
         });
+        let newPlayerPointsPlayed = playerPointsPlayed;
+        newPlayerPointsPlayed[x[i]] = newPlayerPointsPlayed[x[i]] + 1;
+        setPlayerPointsPlayed(newPlayerPointsPlayed);
       }
     }
   }
@@ -954,6 +978,7 @@ const RecordGame = ({ route, navigation }) => {
       );
     });
     setMyScore(myScore + 1);
+
     // update game table to reflect score
 
     let text = null;
@@ -1944,6 +1969,11 @@ const RecordGame = ({ route, navigation }) => {
                 padding={11}
                 margin={1}
                 borderWidth={0.5}
+                addNumber={
+                  playersOnCourtText[0] !== "open"
+                    ? playerPointsPlayed[playersOnCourtText[0]] - 1
+                    : null
+                }
                 onPress={() => {
                   unSelectPlayer(0);
                 }}
@@ -1957,6 +1987,11 @@ const RecordGame = ({ route, navigation }) => {
                 padding={11}
                 margin={1}
                 borderWidth={0.5}
+                addNumber={
+                  playersOnCourtText[1] !== "open"
+                    ? playerPointsPlayed[playersOnCourtText[1]] - 1
+                    : null
+                }
                 onPress={() => {
                   unSelectPlayer(1);
                 }}
@@ -1970,6 +2005,11 @@ const RecordGame = ({ route, navigation }) => {
                 padding={11}
                 margin={1}
                 borderWidth={0.5}
+                addNumber={
+                  playersOnCourtText[2] !== "open"
+                    ? playerPointsPlayed[playersOnCourtText[2]] - 1
+                    : null
+                }
                 onPress={() => {
                   unSelectPlayer(2);
                 }}
@@ -1994,6 +2034,11 @@ const RecordGame = ({ route, navigation }) => {
                 padding={11}
                 margin={1}
                 borderWidth={0.5}
+                addNumber={
+                  playersOnCourtText[3] !== "open"
+                    ? playerPointsPlayed[playersOnCourtText[3]] - 1
+                    : null
+                }
                 onPress={() => {
                   unSelectPlayer(3);
                 }}
@@ -2007,6 +2052,11 @@ const RecordGame = ({ route, navigation }) => {
                 padding={11}
                 margin={1}
                 borderWidth={0.5}
+                addNumber={
+                  playersOnCourtText[4] !== "open"
+                    ? playerPointsPlayed[playersOnCourtText[4]] - 1
+                    : null
+                }
                 onPress={() => {
                   unSelectPlayer(4);
                 }}
@@ -2020,6 +2070,11 @@ const RecordGame = ({ route, navigation }) => {
                 padding={11}
                 margin={1}
                 borderWidth={0.5}
+                addNumber={
+                  playersOnCourtText[5] !== "open"
+                    ? playerPointsPlayed[playersOnCourtText[5]] - 1
+                    : null
+                }
                 onPress={() => {
                   unSelectPlayer(5);
                 }}
@@ -2033,6 +2088,11 @@ const RecordGame = ({ route, navigation }) => {
                 padding={11}
                 margin={1}
                 borderWidth={0.5}
+                addNumber={
+                  playersOnCourtText[6] !== "open"
+                    ? playerPointsPlayed[playersOnCourtText[6]] - 1
+                    : null
+                }
                 onPress={() => {
                   unSelectPlayer(6);
                 }}
@@ -2074,6 +2134,7 @@ const RecordGame = ({ route, navigation }) => {
                         verticalPadding={13}
                         textSize={12}
                         fontWeight="bold"
+                        addNumber={playerPointsPlayed[item]}
                         onPress={() => choosePlayer(item)}
                       />
                     </View>
