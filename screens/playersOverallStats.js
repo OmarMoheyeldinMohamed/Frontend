@@ -36,9 +36,7 @@ const pieColors = [
 
 const db = SQLite.openDatabase("game.db");
 
-const PLayerStats = ({ route, navigation }) => {
-  const gameTimestamp = route.params.timestamp;
-  const opponent = route.params.opponent;
+const PlayersOverallStats = ({ navigation }) => {
   const [players, setPlayers] = React.useState([]);
   const [selectedPlayer, setSelectedPlayer] = React.useState(0);
   const [chartWidth, setChartWidth] = React.useState(0);
@@ -52,14 +50,12 @@ const PLayerStats = ({ route, navigation }) => {
   const [pieDatas3, setPieDatas3] = React.useState([]);
   const [pieDatas4, setPieDatas4] = React.useState([]);
 
-  const [playersActions, setPlayersActions] = React.useState([]);
-
   async function getAllPLayers() {
     await new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          "select distinct playerName as name from actionPerformed where gameTimestamp=? and opponent = ?;",
-          [gameTimestamp, opponent],
+          "select distinct playerName as name from actionPerformed;",
+          [],
           (_, { rows: { _array } }) => {
             let players = [];
             for (let i = 0; i < _array.length; i++) {
@@ -82,8 +78,8 @@ const PLayerStats = ({ route, navigation }) => {
   function getPlayerStats() {
     db.transaction((tx) => {
       tx.executeSql(
-        "select * from actionPerformed where gameTimestamp=? and opponent=?",
-        [gameTimestamp, opponent],
+        "select * from actionPerformed;",
+        [],
         (_, { rows: { _array } }) => {
           //   console.log(_array);
           let playersActions = _array;
@@ -93,12 +89,13 @@ const PLayerStats = ({ route, navigation }) => {
           let playerThrowaways = [];
           let playerDrops = [];
           let playerPlays = [];
-          let playerIncluded = [];
           let playerMissed = [];
           let playerToPlayer = [];
           let playerFromPlayer = [];
           let playerDropFrom = [];
           let playerDropTo = [];
+          let playerIncluded = [];
+          let prevGame = null;
 
           for (let i = 0; i < playersRef.current.length; i++) {
             playerThrows.push(0);
@@ -144,6 +141,15 @@ const PLayerStats = ({ route, navigation }) => {
 
           for (let i = 0; i < _array.length; i++) {
             // console.log(_array[i].id);
+            if (prevGame === null) {
+              prevGame = _array[i].gameTimestamp;
+            } else if (prevGame !== _array[i].gameTimestamp) {
+              prevGame = _array[i].gameTimestamp;
+              playerIncluded = [];
+              for (let i = 0; i < playersRef.current.length; i++) {
+                playerIncluded.push([]);
+              }
+            }
             let playerName = _array[i].playerName;
             let action = _array[i].action;
             let associatedPlayer = _array[i].associatedPlayer;
@@ -221,7 +227,6 @@ const PLayerStats = ({ route, navigation }) => {
             }
             playerStatsRef.current[j] = [
               playContribution,
-
               catchAccuracy,
               throwAccuracy,
             ];
@@ -333,10 +338,6 @@ const PLayerStats = ({ route, navigation }) => {
     onScreenLoad();
   }, []);
 
-  const onLayout = (event) => {
-    const { x, y, height, width } = event.nativeEvent.layout;
-    setChartWidth(width);
-  };
   const progressData = {
     labels: ["Plays", "Catches", "Throws"], // optional
     data: playerStats[selectedPlayer] ? playerStats[selectedPlayer] : [0, 0, 0],
@@ -402,6 +403,8 @@ const PLayerStats = ({ route, navigation }) => {
         },
       ];
 
+  //   console.log(pieData);
+
   return (
     <View
       style={{
@@ -439,7 +442,6 @@ const PLayerStats = ({ route, navigation }) => {
       </View>
       <ScrollView>
         <View
-          onLayout={onLayout}
           style={{
             flex: 1,
             width: "100%",
@@ -478,7 +480,7 @@ const PLayerStats = ({ route, navigation }) => {
           </Text>
           <PieChart
             data={pieData}
-            width={chartWidth}
+            width={screenWidth}
             height={150}
             chartConfig={styles.chartConfig}
             accessor="value"
@@ -489,7 +491,7 @@ const PLayerStats = ({ route, navigation }) => {
           </Text>
           <PieChart
             data={pieData2}
-            width={chartWidth}
+            width={screenWidth}
             height={150}
             chartConfig={styles.chartConfig}
             accessor="value"
@@ -500,7 +502,7 @@ const PLayerStats = ({ route, navigation }) => {
           </Text>
           <PieChart
             data={pieData3}
-            width={chartWidth}
+            width={screenWidth}
             height={150}
             chartConfig={styles.chartConfig}
             accessor="value"
@@ -511,7 +513,7 @@ const PLayerStats = ({ route, navigation }) => {
           </Text>
           <PieChart
             data={pieData4}
-            width={chartWidth}
+            width={screenWidth}
             height={150}
             chartConfig={styles.chartConfig}
             accessor="value"
@@ -522,7 +524,7 @@ const PLayerStats = ({ route, navigation }) => {
   );
 };
 
-export default PLayerStats;
+export default PlayersOverallStats;
 
 const styles = StyleSheet.create({
   container: {

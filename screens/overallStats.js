@@ -19,22 +19,7 @@ let playerImages = {
 
 const db = SQLite.openDatabase("game.db");
 
-/**Points Played
- *Goals
- *Assists
- *Callahans
- *Throws + Deep Throws
- *Catches + Deep Catches
- *Drops
- *Throwaways
- *Ds
- *Deeps
- *Catched Deeps
- *Pre-Assists*/
-
-const ViewStats = ({ route, navigation }) => {
-  let opponent = route.params.opponent;
-  let gameTimestamp = route.params.timestamp;
+const OverallStats = ({ navigation }) => {
   const color = "#119fb8";
   const [chosenStat, setChosenStat] = React.useState("+/-Count");
   const [plusminus, setPlusminus] = React.useState([]);
@@ -50,7 +35,6 @@ const ViewStats = ({ route, navigation }) => {
   const [deeps, setDeeps] = React.useState([]);
   const [catchedDeeps, setCatchedDeeps] = React.useState([]);
   const [preAssists, setPreAssists] = React.useState([]);
-  const [allActionsPerformed, setAllActionsPerformed] = React.useState([]);
 
   function getData() {
     if (chosenStat === "Points Played") {
@@ -107,8 +91,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Points Played
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="In Point" GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="In Point" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let pointsPlayed = _array.map((item) => {
@@ -140,8 +124,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Goals
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND (action="Score" OR action="Callahan") GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="Score" OR action="Callahan" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let goals = _array.map((item) => {
@@ -173,8 +157,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Assists
       tx.executeSql(
-        `SELECT associatedPlayer, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="Score" GROUP BY associatedPlayer ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT associatedPlayer, COUNT(*) FROM actionPerformed WHERE action="Score" GROUP BY associatedPlayer ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let assists = _array.map((item) => {
@@ -206,8 +190,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Callahans
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="Callahan" GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="Callahan" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let callahans = _array.map((item) => {
@@ -239,8 +223,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Throws
       tx.executeSql(
-        `SELECT associatedPlayer, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND (action="Catch" OR action="Score" OR action="Deep") GROUP BY associatedPlayer ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT associatedPlayer, COUNT(*) FROM actionPerformed WHERE action="Catch" OR action="Score" OR action="Deep" GROUP BY associatedPlayer ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let throws = _array.map((item) => {
@@ -272,8 +256,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Catches
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND (action="Catch" OR action="Deep" OR action="Score") GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="Catch" OR action="Deep" OR action="Score" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let catches = _array.map((item) => {
@@ -305,8 +289,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Drops
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="Drop" GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="Drop" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let drops = _array.map((item) => {
@@ -338,8 +322,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Throwaways
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="Throwaway" GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="Throwaway" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let throwaways = _array.map((item) => {
@@ -371,8 +355,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Ds
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="Defence" GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="Defence" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let ds = _array.map((item) => {
@@ -404,8 +388,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Deeps
       tx.executeSql(
-        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="Deep" GROUP BY playerName ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT playerName, COUNT(*) FROM actionPerformed WHERE action="Deep" GROUP BY playerName ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let deeps = _array.map((item) => {
@@ -437,8 +421,8 @@ const ViewStats = ({ route, navigation }) => {
     db.transaction((tx) => {
       //Catched Deeps
       tx.executeSql(
-        `SELECT associatedPlayer, COUNT(*) FROM actionPerformed WHERE opponent=? AND gameTimestamp=? AND action="Deep" GROUP BY associatedPlayer ORDER BY COUNT(*) DESC`,
-        [opponent, gameTimestamp],
+        `SELECT associatedPlayer, COUNT(*) FROM actionPerformed WHERE action="Deep" GROUP BY associatedPlayer ORDER BY COUNT(*) DESC`,
+        [],
         (txObj, { rows: { _array } }) => {
           //   console.log(_array);
           let catchedDeeps = _array.map((item) => {
@@ -471,15 +455,26 @@ const ViewStats = ({ route, navigation }) => {
 
     db.transaction((tx) => {
       tx.executeSql(
-        "select * from actionPerformed where gameTimestamp = ? and opponent = ?",
-        [gameTimestamp, opponent],
+        "select * from actionPerformed;",
+        [],
         (_, { rows: { _array } }) => {
           //   console.log(_array);
+          let allGamesActions = [];
+          let prevGame = null;
           let actions = [];
           let actionsPerformed = _array;
 
           for (let i = 0; i < actionsPerformed.length; i++) {
             let action = actionsPerformed[i];
+            if (prevGame === null) {
+              prevGame = action.gameTimestamp;
+            } else {
+              if (prevGame !== action.gameTimestamp) {
+                allGamesActions.push(actions);
+                actions = [];
+                prevGame = action.gameTimestamp;
+              }
+            }
             if (action.action === "Score") {
               actions.push({
                 action: "Score",
@@ -567,6 +562,10 @@ const ViewStats = ({ route, navigation }) => {
             }
           }
 
+          if (actions.length > 0) {
+            allGamesActions.push(actions);
+          }
+
           let pm = {};
           let preAssists = {};
 
@@ -575,45 +574,47 @@ const ViewStats = ({ route, navigation }) => {
             preAssists[playerNames[i]] = { stat: 0 };
           }
 
-          for (let i = 0; i < actions.length; i++) {
-            let action = actions[i];
-            if (
-              action.action === "Score" ||
-              action.action === "Defence" ||
-              action.action === "Deep" ||
-              action.action === "Callahan"
-            ) {
-              // console.log(action.player);
-              if (action.player === null) {
-                continue;
-              }
-
-              pm[action.player]["stat"] += 1;
-            } else if (
-              action.action === "Throwaway" ||
-              action.action === "Drop" ||
-              action.action === "Stalled"
-            ) {
-              if (action.player === null) {
-                continue;
-              }
-              pm[action.player].stat -= 1;
-            }
-            if (action.action === "Score" || action.action === "Deep") {
-              if (action.player === null) {
-                continue;
-              }
-              pm[action.associatedPlayer].stat += 1;
-            }
-            if (i < actions.length - 1) {
-              let nextAction = actions[i + 1];
-
+          for (let j = 0; j < allGamesActions.length; j++) {
+            for (let i = 0; i < allGamesActions[j].length; i++) {
+              let action = allGamesActions[j][i];
               if (
-                (action.action === "Catch" || action.action === "Deep") &&
-                nextAction.action === "Score" &&
-                action.associatedPlayer !== nextAction.player
+                action.action === "Score" ||
+                action.action === "Defence" ||
+                action.action === "Deep" ||
+                action.action === "Callahan"
               ) {
-                preAssists[action.associatedPlayer].stat += 1;
+                // console.log(action.player);
+                if (action.player === null) {
+                  continue;
+                }
+
+                pm[action.player]["stat"] += 1;
+              } else if (
+                action.action === "Throwaway" ||
+                action.action === "Drop" ||
+                action.action === "Stalled"
+              ) {
+                if (action.player === null) {
+                  continue;
+                }
+                pm[action.player].stat -= 1;
+              }
+              if (action.action === "Score" || action.action === "Deep") {
+                if (action.player === null) {
+                  continue;
+                }
+                pm[action.associatedPlayer].stat += 1;
+              }
+              if (i < allGamesActions[j].length - 1) {
+                let nextAction = allGamesActions[j][i + 1];
+
+                if (
+                  (action.action === "Catch" || action.action === "Deep") &&
+                  nextAction.action === "Score" &&
+                  action.associatedPlayer !== nextAction.player
+                ) {
+                  preAssists[action.associatedPlayer].stat += 1;
+                }
               }
             }
           }
@@ -819,7 +820,7 @@ const ViewStats = ({ route, navigation }) => {
   );
 };
 
-export default ViewStats;
+export default OverallStats;
 
 const styles = StyleSheet.create({
   container: {

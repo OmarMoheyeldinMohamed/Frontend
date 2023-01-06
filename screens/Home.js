@@ -21,6 +21,15 @@ const Home = ({ navigation }) => {
   function onViewGamesPress() {
     navigation.navigate("View Games");
   }
+
+  function onViewStatsPress() {
+    navigation.navigate("View Overall Stats");
+  }
+
+  function onPlayersStatsPress() {
+    navigation.navigate("Players Overall Stats");
+  }
+
   async function getAllPlayers() {
     // use mysql to get all players
 
@@ -274,7 +283,11 @@ const Home = ({ navigation }) => {
       <MyButton onPress={onPlayerPress} text="Add Player"></MyButton>
       <MyButton onPress={onAddGamePress} text="Add Game"></MyButton>
       <MyButton onPress={onViewGamesPress} text="View Games"></MyButton>
-
+      <MyButton onPress={onViewStatsPress} text="View Overall Stats"></MyButton>
+      <MyButton
+        onPress={onPlayersStatsPress}
+        text="Players Overall Stats"
+      ></MyButton>
       <StatusBar style="auto" />
     </View>
   );

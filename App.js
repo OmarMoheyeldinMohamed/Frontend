@@ -14,7 +14,8 @@ import RecordGame from "./screens/RecordGame";
 import ViewEvents from "./screens/viewEvents";
 import ViewStats from "./screens/viewStats";
 import PLayerStats from "./screens/playerStats";
-
+import OverallStats from "./screens/overallStats";
+import PlayersOverallStats from "./screens/playersOverallStats";
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -138,6 +139,34 @@ const MyStack = () => {
           component={PLayerStats}
           options={{
             title: "View Player Stats",
+            headerStyle: {
+              backgroundColor: "#119fb8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="View Overall Stats"
+          component={OverallStats}
+          options={{
+            title: "View Overall Stats",
+            headerStyle: {
+              backgroundColor: "#119fb8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Players Overall Stats"
+          component={PlayersOverallStats}
+          options={{
+            title: "Players Overall Stats",
             headerStyle: {
               backgroundColor: "#119fb8",
             },
