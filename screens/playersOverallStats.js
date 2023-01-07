@@ -139,68 +139,76 @@ const PlayersOverallStats = ({ navigation }) => {
             playerDropTo.push(playerDropToDict);
           }
 
-          for (let i = 0; i < _array.length; i++) {
-            // console.log(_array[i].id);
-            if (prevGame === null) {
-              prevGame = _array[i].gameTimestamp;
-            } else if (prevGame !== _array[i].gameTimestamp) {
-              prevGame = _array[i].gameTimestamp;
-              playerIncluded = [];
-              for (let i = 0; i < playersRef.current.length; i++) {
-                playerIncluded.push([]);
+          let allGamesActions = {};
+          for (let i = 0; i < playersActions.length; i++) {
+            let gameTimestamp = playersActions[i].gameTimestamp;
+            if (gameTimestamp in allGamesActions) {
+              allGamesActions[gameTimestamp].push(playersActions[i]);
+            } else {
+              allGamesActions[gameTimestamp] = [playersActions[i]];
+            }
+          }
+
+          for (let gameTimestamp in allGamesActions) {
+            let gameActions = allGamesActions[gameTimestamp];
+            playerIncluded = [];
+            for (let i = 0; i < playersRef.current.length; i++) {
+              playerIncluded.push([]);
+            }
+
+            for (let i = 0; i < gameActions.length; i++) {
+              let playerName = gameActions[i].playerName;
+              let action = gameActions[i].action;
+              let associatedPlayer = gameActions[i].associatedPlayer;
+              let point = gameActions[i].point;
+
+              if (playerName === undefined || playerName === null) {
+                continue;
               }
-            }
-            let playerName = _array[i].playerName;
-            let action = _array[i].action;
-            let associatedPlayer = _array[i].associatedPlayer;
-            let point = _array[i].point;
-
-            if (playerName === undefined || playerName === null) {
-              continue;
-            }
-            let playerIndex = playersRef.current.indexOf(playerName);
-            let associatedPlayerIndex = -1;
-            if (associatedPlayer !== undefined && associatedPlayer !== null) {
-              associatedPlayerIndex =
-                playersRef.current.indexOf(associatedPlayer);
-            }
-
-            if (playerIndex === -1) {
-              continue;
-            }
-
-            if (action === "In Point") {
-              playerIncluded[playerIndex].push(point);
-            } else if (
-              action === "Score" ||
-              action == "Catch" ||
-              action === "Deep"
-            ) {
-              playerCatches[playerIndex] += 1;
-              if (associatedPlayerIndex !== -1) {
-                playerThrows[associatedPlayerIndex] += 1;
-                playerToPlayer[associatedPlayerIndex][playerName] += 1;
-                playerFromPlayer[playerIndex][associatedPlayer] += 1;
-                playerPlays[associatedPlayerIndex] += 1;
+              let playerIndex = playersRef.current.indexOf(playerName);
+              let associatedPlayerIndex = -1;
+              if (associatedPlayer !== undefined && associatedPlayer !== null) {
+                associatedPlayerIndex =
+                  playersRef.current.indexOf(associatedPlayer);
               }
-              playerPlays[playerIndex] += 1;
-              for (let j = 0; j < playerIncluded.length; j++) {
-                if (playerIncluded[j].includes(point)) {
-                  playerMissed[j] += 1;
-                } else {
-                  console.warn(j);
+
+              if (playerIndex === -1) {
+                continue;
+              }
+
+              if (action === "In Point") {
+                playerIncluded[playerIndex].push(point);
+              } else if (
+                action === "Score" ||
+                action == "Catch" ||
+                action === "Deep"
+              ) {
+                playerCatches[playerIndex] += 1;
+                if (associatedPlayerIndex !== -1) {
+                  playerThrows[associatedPlayerIndex] += 1;
+                  playerToPlayer[associatedPlayerIndex][playerName] += 1;
+                  playerFromPlayer[playerIndex][associatedPlayer] += 1;
+                  playerPlays[associatedPlayerIndex] += 1;
                 }
+                playerPlays[playerIndex] += 1;
+                for (let j = 0; j < playerIncluded.length; j++) {
+                  if (playerIncluded[j].includes(point)) {
+                    playerMissed[j] += 1;
+                  } else {
+                    console.warn(j, gameActions[i].opponent, point);
+                  }
+                }
+              } else if (action === "Throwaway") {
+                playerThrowaways[playerIndex] += 1;
+              } else if (action === "Drop") {
+                playerDrops[playerIndex] += 1;
+                if (associatedPlayerIndex !== -1) {
+                  playerDropFrom[playerIndex][associatedPlayer] += 1;
+                  playerDropTo[associatedPlayerIndex][playerName] += 1;
+                }
+              } else if (action === "Subbed In") {
+                playerIncluded[playerIndex].push(point);
               }
-            } else if (action === "Throwaway") {
-              playerThrowaways[playerIndex] += 1;
-            } else if (action === "Drop") {
-              playerDrops[playerIndex] += 1;
-              if (associatedPlayerIndex !== -1) {
-                playerDropFrom[playerIndex][associatedPlayer] += 1;
-                playerDropTo[associatedPlayerIndex][playerName] += 1;
-              }
-            } else if (action === "Subbed In") {
-              playerIncluded[playerIndex].push(point);
             }
           }
           // calculate stats for each player

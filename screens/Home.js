@@ -30,6 +30,10 @@ const Home = ({ navigation }) => {
     navigation.navigate("Players Overall Stats");
   }
 
+  function onTeamStatsPress() {
+    navigation.navigate("Team Stats");
+  }
+
   async function getAllPlayers() {
     // use mysql to get all players
 
@@ -288,6 +292,7 @@ const Home = ({ navigation }) => {
         onPress={onPlayersStatsPress}
         text="Players Overall Stats"
       ></MyButton>
+      <MyButton onPress={onTeamStatsPress} text="View Team Stats"></MyButton>
       <StatusBar style="auto" />
     </View>
   );
@@ -306,6 +311,6 @@ const styles = StyleSheet.create({
     width: 200,
     height: 200,
     margin: 20,
-    marginBottom: 80,
+    marginBottom: 20,
   },
 });

@@ -1240,7 +1240,7 @@ const RecordGame = ({ route, navigation }) => {
       endGame();
       return;
     } else {
-      setOnOffense(!onOffense);
+      setOnOffense(false);
     }
     addSameLine(mys + 2 + theirs);
   }

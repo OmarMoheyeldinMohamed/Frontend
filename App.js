@@ -16,6 +16,8 @@ import ViewStats from "./screens/viewStats";
 import PLayerStats from "./screens/playerStats";
 import OverallStats from "./screens/overallStats";
 import PlayersOverallStats from "./screens/playersOverallStats";
+import TeamStats from "./screens/TeamStats";
+import LineBuilder from "./screens/lineBuilder";
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -167,6 +169,34 @@ const MyStack = () => {
           component={PlayersOverallStats}
           options={{
             title: "Players Overall Stats",
+            headerStyle: {
+              backgroundColor: "#119fb8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Team Stats"
+          component={TeamStats}
+          options={{
+            title: "Team Stats",
+            headerStyle: {
+              backgroundColor: "#119fb8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Line Builder"
+          component={LineBuilder}
+          options={{
+            title: "Line Builder",
             headerStyle: {
               backgroundColor: "#119fb8",
             },
