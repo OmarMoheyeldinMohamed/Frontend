@@ -52,11 +52,13 @@ async function getGames() {
   return games;
 }
 
-const ViewGames = ({ navigation }) => {
+const ViewGames = ({ navigation, route }) => {
   const [games, setGames] = React.useState([]);
   const [isModalVisible, setModalVisible] = React.useState(false);
   const [onlineGames, setOnlineGames] = React.useState([]);
   const [isVisible, setIsVisible] = React.useState(false);
+
+  const isAdmin = route.params.isAdmin;
   function toggleModal() {
     setModalVisible(!isModalVisible);
   }
@@ -438,7 +440,10 @@ const ViewGames = ({ navigation }) => {
         renderItem={({ item, index }) => (
           <GameItem
             onPress={() => {
-              navigation.navigate("Game Home", { game: item });
+              navigation.navigate("Game Home", {
+                game: item,
+                isAdmin: isAdmin,
+              });
             }}
             onDelete={() => {
               deleteItemHandler(item);

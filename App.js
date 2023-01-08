@@ -18,12 +18,27 @@ import OverallStats from "./screens/overallStats";
 import PlayersOverallStats from "./screens/playersOverallStats";
 import TeamStats from "./screens/TeamStats";
 import LineBuilder from "./screens/lineBuilder";
+import Login from "./screens/login";
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen
+          name="Login"
+          component={Login}
+          options={{
+            title: "Login",
+            headerStyle: {
+              backgroundColor: "#119fb8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
         <Stack.Screen
           name="Home"
           component={Home}

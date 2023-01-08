@@ -9,7 +9,8 @@ import * as SQLite from "expo-sqlite";
 const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
-const Home = ({ navigation }) => {
+const Home = ({ route, navigation }) => {
+  const isAdmin = route.params.isAdmin;
   function onPlayerPress() {
     navigation.navigate("Add Player");
   }
@@ -19,7 +20,7 @@ const Home = ({ navigation }) => {
   }
 
   function onViewGamesPress() {
-    navigation.navigate("View Games");
+    navigation.navigate("View Games", { isAdmin: isAdmin });
   }
 
   function onViewStatsPress() {
@@ -173,7 +174,6 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     // Create all tables if they don't exist
-
     // db.transaction((tx) => {
     //   tx.executeSql(
     //     `DROP TABLE player`,
@@ -186,7 +186,6 @@ const Home = ({ navigation }) => {
     //     }
     //   );
     // });
-
     // db.transaction((tx) => {
     //   tx.executeSql(
     //     `DROP TABLE game`,
@@ -199,7 +198,6 @@ const Home = ({ navigation }) => {
     //     }
     //   );
     // });
-
     // db.transaction((tx) => {
     //   tx.executeSql(
     //     `DROP TABLE actionPerformed`,
@@ -212,81 +210,86 @@ const Home = ({ navigation }) => {
     //     }
     //   );
     // });
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS player (
-          name varchar(25) NOT NULL,
-          number int DEFAULT NULL,
-          phone varchar(15) DEFAULT NULL,
-          major varchar(25) DEFAULT NULL,
-          email varchar(50) DEFAULT NULL,
-          PRIMARY KEY (name)
-        )`,
-        [],
-        (tx, results) => {
-          console.log("Player table created");
-        },
-        (tx, error) => {
-          console.log("Error creating player table");
-        }
-      );
-    });
-    db.transaction((tx) => {
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS game (
-          opponent varchar(25) NOT NULL,
-          timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-          myScore int DEFAULT '-1',
-          theirScore int DEFAULT '-1',
-          home tinyint(1) DEFAULT NULL,
-          category varchar(50) DEFAULT NULL,
-          startOffence tinyint(1) DEFAULT '1',
-          PRIMARY KEY (timestamp,opponent)
-        ) `,
-        [],
-        (tx, results) => {
-          console.log("Game table created");
-        },
-        (tx, error) => {
-          console.log("Error creating game table");
-        }
-      );
-    });
-
-    db.transaction((tx) => {
-      tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS actionPerformed (
-          opponent varchar(25) NOT NULL,
-          gameTimestamp timestamp NOT NULL,
-          playerName varchar(25) DEFAULT NULL,
-          action varchar(20) NOT NULL,
-          id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-          point int NOT NULL,
-          associatedPlayer varchar(25) DEFAULT NULL,
-          offence tinyint(1) DEFAULT NULL,
-          FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp) ON DELETE CASCADE,
-          FOREIGN KEY (playerName) REFERENCES player (name),
-          FOREIGN KEY (associatedPlayer) REFERENCES player (name)
-        )`,
-        [],
-        (tx, results) => {
-          console.log("ActionPerformed table created");
-        },
-        (tx, error) => {
-          console.log("Error creating actionPerformed table");
-        }
-      );
-    });
-
-    getAllPlayers();
+    // db.transaction((tx) => {
+    //   tx.executeSql(
+    //     `CREATE TABLE IF NOT EXISTS player (
+    //       name varchar(25) NOT NULL,
+    //       number int DEFAULT NULL,
+    //       phone varchar(15) DEFAULT NULL,
+    //       major varchar(25) DEFAULT NULL,
+    //       email varchar(50) DEFAULT NULL,
+    //       PRIMARY KEY (name)
+    //     )`,
+    //     [],
+    //     (tx, results) => {
+    //       console.log("Player table created");
+    //     },
+    //     (tx, error) => {
+    //       console.log("Error creating player table");
+    //     }
+    //   );
+    // });
+    // db.transaction((tx) => {
+    //   tx.executeSql(
+    //     `CREATE TABLE IF NOT EXISTS game (
+    //       opponent varchar(25) NOT NULL,
+    //       timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    //       myScore int DEFAULT '-1',
+    //       theirScore int DEFAULT '-1',
+    //       home tinyint(1) DEFAULT NULL,
+    //       category varchar(50) DEFAULT NULL,
+    //       startOffence tinyint(1) DEFAULT '1',
+    //       PRIMARY KEY (timestamp,opponent)
+    //     ) `,
+    //     [],
+    //     (tx, results) => {
+    //       console.log("Game table created");
+    //     },
+    //     (tx, error) => {
+    //       console.log("Error creating game table");
+    //     }
+    //   );
+    // });
+    // db.transaction((tx) => {
+    //   tx.executeSql(
+    //     `CREATE TABLE IF NOT EXISTS actionPerformed (
+    //       opponent varchar(25) NOT NULL,
+    //       gameTimestamp timestamp NOT NULL,
+    //       playerName varchar(25) DEFAULT NULL,
+    //       action varchar(20) NOT NULL,
+    //       id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+    //       point int NOT NULL,
+    //       associatedPlayer varchar(25) DEFAULT NULL,
+    //       offence tinyint(1) DEFAULT NULL,
+    //       FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp) ON DELETE CASCADE,
+    //       FOREIGN KEY (playerName) REFERENCES player (name),
+    //       FOREIGN KEY (associatedPlayer) REFERENCES player (name)
+    //     )`,
+    //     [],
+    //     (tx, results) => {
+    //       console.log("ActionPerformed table created");
+    //     },
+    //     (tx, error) => {
+    //       console.log("Error creating actionPerformed table");
+    //     }
+    //   );
+    // });
+    // getAllPlayers();
   }, []);
 
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={require("../assets/logo.png")} />
-      <MyButton onPress={onPlayerPress} text="Add Player"></MyButton>
-      <MyButton onPress={onAddGamePress} text="Add Game"></MyButton>
+      <MyButton
+        onPress={onPlayerPress}
+        text="Add Player"
+        disabled={!isAdmin}
+      ></MyButton>
+      <MyButton
+        onPress={onAddGamePress}
+        text="Add Game"
+        disabled={!isAdmin}
+      ></MyButton>
       <MyButton onPress={onViewGamesPress} text="View Games"></MyButton>
       <MyButton onPress={onViewStatsPress} text="View Overall Stats"></MyButton>
       <MyButton

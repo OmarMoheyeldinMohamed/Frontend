@@ -50,7 +50,7 @@ const GameHome = ({ route, navigation }) => {
     startOffence,
     theirScore,
   } = route.params.game;
-
+  const isAdmin = route.params.isAdmin;
   let year = timestamp.substring(0, 4);
   let month = timestamp.split("-")[1];
   let day = timestamp.split("-")[2];
@@ -507,6 +507,7 @@ const GameHome = ({ route, navigation }) => {
           text={"Upload Game Online"}
           onPress={uploadGame}
           width={200}
+          disabled={!isAdmin}
         />
       </View>
       <View
