@@ -18,7 +18,7 @@ import { Keyboard } from "react-native";
 // import AnimatedLoader from "react-native-animated-loader";
 import LottieView from "lottie-react-native";
 
-// const ip = "http://192.168.1.4:3000";
+// const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 
 const db = SQLite.openDatabase("game.db");

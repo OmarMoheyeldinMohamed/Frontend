@@ -19,7 +19,7 @@ import axios from "axios";
 // import AnimatedLoader from "react-native-animated-loader";
 import LottieView from "lottie-react-native";
 
-// const ip = "http://192.168.1.4:3000";
+// const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 
 let mayhemLogo = require("../assets/logo.png");
@@ -249,7 +249,7 @@ const GameHome = ({ route, navigation }) => {
     db.transaction((tx) => {
       tx.executeSql(
         `
-        SELECT COUNT(*) FROM actionPerformed WHERE gameTimestamp = "${timeStr}" AND opponent = "${opponent}" AND action != 'In Point';
+        SELECT COUNT(*) FROM actionPerformed WHERE gameTimestamp = "${timeStr}" AND opponent = "${opponent}";
         `,
         null,
         (tx, results) => {
@@ -424,7 +424,7 @@ const GameHome = ({ route, navigation }) => {
         );
       });
     });
-
+    // TODO: update to include offense / defence
     let values = "";
     for (let i = 0; i < gameActions.length; i++) {
       values += "('" + gameActions[i].opponent + "','" + axiosTimeStr;
@@ -435,13 +435,18 @@ const GameHome = ({ route, navigation }) => {
       }
       values += gameActions[i].action + "','" + gameActions[i].point;
       if (gameActions[i].associatedPlayer !== null) {
-        values += "','" + gameActions[i].associatedPlayer + "'),";
+        values += "','" + gameActions[i].associatedPlayer + "',";
       } else {
-        values += "',null),";
+        values += "',null,";
+      }
+      if (gameActions[i].offence !== null) {
+        values += "'" + gameActions[i].offence + "'),";
+      } else {
+        values += "null),";
       }
     }
     values = values.slice(0, -1);
-    // console.log(values);
+    console.log(values);
 
     // setVisible(false);
     console.log(values);

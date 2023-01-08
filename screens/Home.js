@@ -5,7 +5,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 
 import * as SQLite from "expo-sqlite";
-
+// const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
@@ -264,6 +264,7 @@ const Home = ({ navigation }) => {
           id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
           point int NOT NULL,
           associatedPlayer varchar(25) DEFAULT NULL,
+          offence tinyint(1) DEFAULT NULL,
           FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp) ON DELETE CASCADE,
           FOREIGN KEY (playerName) REFERENCES player (name),
           FOREIGN KEY (associatedPlayer) REFERENCES player (name)

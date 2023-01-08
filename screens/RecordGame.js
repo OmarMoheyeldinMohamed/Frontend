@@ -14,7 +14,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-native-modal";
 import axios from "axios";
 import * as SQLite from "expo-sqlite";
-// const ip = "http://192.168.1.4:3000";
+// const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 
 let mayhemLogo = require("../assets/logo.png");
@@ -180,6 +180,9 @@ const RecordGame = ({ route, navigation }) => {
   const choosePlayer = (player) => {
     // console.log(player);
     let index = playersOnCourt.indexOf("");
+    if (index === -1) {
+      return;
+    }
     let newPlayersOnCourt = playersOnCourt.map((player) => {
       return player;
     });
@@ -211,13 +214,14 @@ const RecordGame = ({ route, navigation }) => {
     new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          "insert into actionPerformed (playerName, gameTimestamp, opponent, action, point) values (?, ?, ?, ?, ?)",
+          "insert into actionPerformed (playerName, gameTimestamp, opponent, action, point, offence) values (?, ?, ?, ?, ?, ?)",
           [
             player,
             route.params.timestamp,
             route.params.opponent,
             "In Point",
             myScore + theirScore + 1,
+            onOffense ? 1 : 0,
           ],
           (_, { rows: { _array } }) => {
             resolve(_array);
@@ -742,7 +746,7 @@ const RecordGame = ({ route, navigation }) => {
     return text;
   }
 
-  function addSameLine(point) {
+  function addSameLine(point, offence) {
     let x = playersOnCourt.map((player) => {
       return player;
     });
@@ -753,13 +757,14 @@ const RecordGame = ({ route, navigation }) => {
         let playerName = x[i];
         let action = "In Point";
         let insertQuery =
-          "insert into actionPerformed (opponent, gameTimestamp, playerName, action, point) values (?,?,?,?,?)";
+          "insert into actionPerformed (opponent, gameTimestamp, playerName, action, point, offence) values (?,?,?,?,?,?)";
         let values = [
           opponent,
           route.params.timestamp,
           playerName,
           action,
           point,
+          offence,
         ];
         db.transaction((tx) => {
           tx.executeSql(
@@ -980,7 +985,7 @@ const RecordGame = ({ route, navigation }) => {
     setMyScore(myScore + 1);
 
     // update game table to reflect score
-
+    let offence = null;
     let text = null;
     if (Boolean(route.params.startOffence) === true) {
       text = "defence";
@@ -1000,7 +1005,7 @@ const RecordGame = ({ route, navigation }) => {
         ],
         { cancelable: true }
       );
-
+      offence = !Boolean(route.params.startOffence);
       setOnOffense(!Boolean(route.params.startOffence));
     } else if (mys + 1 === 13) {
       Alert.alert(
@@ -1018,9 +1023,10 @@ const RecordGame = ({ route, navigation }) => {
       // TODO: end game
       return;
     } else {
+      offence = !onOffense;
       setOnOffense(!onOffense);
     }
-    addSameLine(mys + 2 + theirs);
+    addSameLine(mys + 2 + theirs, offence);
   }
 
   function playerDeep(index) {
@@ -1205,6 +1211,7 @@ const RecordGame = ({ route, navigation }) => {
     });
     setMyScore(mys + 1);
     let text = null;
+    let offence = null;
     if (Boolean(route.params.startOffence) === true) {
       text = "defence";
     } else {
@@ -1223,7 +1230,7 @@ const RecordGame = ({ route, navigation }) => {
         ],
         { cancelable: true }
       );
-
+      offence = !Boolean(route.params.startOffence);
       setOnOffense(!Boolean(route.params.startOffence));
     } else if (mys + 1 === 13) {
       Alert.alert(
@@ -1240,9 +1247,10 @@ const RecordGame = ({ route, navigation }) => {
       endGame();
       return;
     } else {
+      offence = false;
       setOnOffense(false);
     }
-    addSameLine(mys + 2 + theirs);
+    addSameLine(mys + 2 + theirs, offence);
   }
 
   function theirThrowaway() {
@@ -1351,6 +1359,7 @@ const RecordGame = ({ route, navigation }) => {
     setTheirScore(theirs + 1);
 
     let text = null;
+    let offence = null;
     if (Boolean(route.params.startOffence) === true) {
       text = "defence";
     } else {
@@ -1369,8 +1378,8 @@ const RecordGame = ({ route, navigation }) => {
         ],
         { cancelable: true }
       );
-
-      setOnOffense(Boolean(route.params.startOffence));
+      offence = !Boolean(route.params.startOffence);
+      setOnOffense(!Boolean(route.params.startOffence));
     } else if (theirs + 1 == 13) {
       Alert.alert(
         "Game Over",
@@ -1387,9 +1396,10 @@ const RecordGame = ({ route, navigation }) => {
       endGame();
       return;
     } else {
+      offence = !onOffense;
       setOnOffense(!onOffense);
     }
-    addSameLine(mys + theirs + 2);
+    addSameLine(mys + theirs + 2, offence);
   }
 
   function playerDefended(index) {

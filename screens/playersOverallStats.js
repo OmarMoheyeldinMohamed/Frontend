@@ -195,7 +195,7 @@ const PlayersOverallStats = ({ navigation }) => {
                   if (playerIncluded[j].includes(point)) {
                     playerMissed[j] += 1;
                   } else {
-                    console.warn(j, gameActions[i].opponent, point);
+                    // console.warn(j, gameActions[i].opponent, point);
                   }
                 }
               } else if (action === "Throwaway") {

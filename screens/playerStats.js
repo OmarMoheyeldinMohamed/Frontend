@@ -182,7 +182,7 @@ const PLayerStats = ({ route, navigation }) => {
                 if (playerIncluded[j].includes(point)) {
                   playerMissed[j] += 1;
                 } else {
-                  console.warn(j);
+                  // console.warn(j);
                 }
               }
             } else if (action === "Throwaway") {
