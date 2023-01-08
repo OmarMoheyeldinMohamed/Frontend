@@ -330,16 +330,21 @@ const ViewGames = ({ navigation }) => {
       }
       values += action.action + "','" + action.point;
       if (action.associatedPlayer !== null) {
-        values += "','" + action.associatedPlayer + "'),";
+        values += "','" + action.associatedPlayer + "',";
       } else {
-        values += "',null),";
+        values += "',null,";
+      }
+      if (action.offence !== null) {
+        values += "'" + action.offence + "'),";
+      } else {
+        values += "null),";
       }
     }
     values = values.slice(0, -1);
 
     await db.transaction((tx) => {
       tx.executeSql(
-        "INSERT INTO actionPerformed (opponent, gameTimestamp, playerName, action, point, associatedPlayer) VALUES " +
+        "INSERT INTO actionPerformed (opponent, gameTimestamp, playerName, action, point, associatedPlayer, offence) VALUES " +
           values +
           ";",
         [],

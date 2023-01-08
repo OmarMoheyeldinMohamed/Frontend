@@ -103,7 +103,7 @@ const TeamStats = ({ navigation }) => {
       allGames.push({
         actions: gameActions,
         timestamp: gameTimestamp,
-        startOffense: games[i].startOffense,
+        startOffense: games[i]["startOffence"],
       });
     }
 
@@ -116,6 +116,7 @@ const TeamStats = ({ navigation }) => {
 
     for (let i = 0; i < allGames.length; i++) {
       let game = allGames[i];
+      // console.log("game", game);
       let actions = game.actions;
       let startOffense = game.startOffense === 1 ? true : false;
       let currPointOffence = startOffense;
@@ -123,15 +124,15 @@ const TeamStats = ({ navigation }) => {
       let theirScore = 0;
       let offensePoints = 0;
       let defensePoints = 0;
-      let offenseTurnovers = 0;
-      let defenseTurnovers = 0;
       let offenseScore = 0;
       let defenseScore = 0;
+
       let point = 0;
       let passes = 0;
 
       for (let j = 0; j < actions.length; j++) {
         let action = actions[j];
+
         if (action.action === "Score" || action.action === "Callahan") {
           if (currPointOffence) {
             offensePoints++;
