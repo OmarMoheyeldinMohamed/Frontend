@@ -467,7 +467,9 @@ const LineBuilder = ({ navigation }) => {
       });
     });
 
-    let allGamesActions = [];
+    // console.log(actions);
+
+    let allGamesActions = {};
     for (let i = 0; i < actions.length; i++) {
       let action = actions[i];
       let gameTimestamp = actions[i].gameTimestamp;
@@ -478,7 +480,9 @@ const LineBuilder = ({ navigation }) => {
       }
     }
 
-    for (key in allGamesActions) {
+    // console.log("all", allGamesActions);
+
+    for (let key in allGamesActions) {
       let gameActions = allGamesActions[key];
       let onOffence = false;
       // console.log(gameActions);
@@ -512,6 +516,11 @@ const LineBuilder = ({ navigation }) => {
     setLine1OffensePoints(offensePoints);
     setLine1DefenseWins(defenseWins);
     setLine1OffenseWins(offenseWins);
+
+    console.log("Offense Points: " + offensePoints);
+    console.log("Defense Points: " + defensePoints);
+    console.log("Offense Wins: " + offenseWins);
+    console.log("Defense Wins: " + defenseWins);
 
     let offenceEfficiency = 0;
     if (offensePoints > 0) {
@@ -569,7 +578,7 @@ const LineBuilder = ({ navigation }) => {
       }
     }
 
-    for (key in allGamesActions) {
+    for (let key in allGamesActions) {
       let gameActions = allGamesActions[key];
       let onOffence = false;
       // console.log(gameActions);

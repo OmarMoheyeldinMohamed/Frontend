@@ -446,7 +446,7 @@ const GameHome = ({ route, navigation }) => {
       }
     }
     values = values.slice(0, -1);
-    console.log(values);
+    // console.log(values);
 
     // setVisible(false);
     console.log(values);
