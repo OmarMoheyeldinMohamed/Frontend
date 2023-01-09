@@ -7,13 +7,17 @@ import axios from "axios";
 import * as SQLite from "expo-sqlite";
 import { TextInput } from "react-native-gesture-handler";
 import { useState, useRef } from "react";
+import { Keyboard } from "react-native";
 import { Alert } from "react-native";
 
 // const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
-const Login = ({ navigation }) => {
+const Login = ({ navigation, route }) => {
+  const params = route.params;
+
+  const logout = params ? params.logout : false;
   async function getAllPlayers() {
     // use mysql to get all players
 
@@ -302,7 +306,7 @@ const Login = ({ navigation }) => {
     await new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          "select name, isAdmin from player",
+          "select name, isAdmin from player;",
           [],
           (_, { rows: { _array } }) => {
             resolve(_array);
@@ -322,11 +326,21 @@ const Login = ({ navigation }) => {
               let name = _array[0].name;
               let player = players.filter((player) => player.name === name)[0];
               let isAdmin = 0;
+
               if (player !== undefined) {
                 isAdmin = player.isAdmin;
               }
               isAdmin = isAdmin === 1 ? true : false;
-              navigation.navigate("Home", { name: name, isAdmin: isAdmin });
+              // navigation.navigate("Home", { name: name, isAdmin: isAdmin });
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: "Home",
+                    params: { name: name, isAdmin: isAdmin },
+                  },
+                ],
+              });
             }
           },
           (_, error) => {
@@ -394,7 +408,11 @@ const Login = ({ navigation }) => {
     //   );
     // });
 
-    onScreenLoad();
+    if (logout === true) {
+      return;
+    } else {
+      onScreenLoad();
+    }
   }, []);
 
   const [enteredEmail, setEnteredEmail] = useState("");
@@ -437,7 +455,7 @@ const Login = ({ navigation }) => {
       await new Promise((resolve, reject) => {
         db.transaction((tx) => {
           tx.executeSql(
-            "delete from login",
+            "delete from login;",
             [],
             (tx, results) => {
               resolve(results);
@@ -461,9 +479,18 @@ const Login = ({ navigation }) => {
           }
         );
       });
-      navigation.navigate("Home", {
-        name: player.name,
-        isAdmin: player.isAdmin,
+      // navigation.navigate("Home", {
+      //   name: player.name,
+      //   isAdmin: player.isAdmin,
+      // });
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: "Home",
+            params: { name: player.name, isAdmin: player.isAdmin },
+          },
+        ],
       });
     } else {
       Alert.alert("Invalid email or password");

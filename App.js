@@ -4,6 +4,7 @@ import MyButton from "./components/MyButton";
 import * as React from "react";
 import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 
 import Home from "./screens/Home";
 import AddPlayer from "./screens/addPlayer";
@@ -51,6 +52,8 @@ const MyStack = () => {
             headerTitleStyle: {
               fontWeight: "bold",
             },
+            headerBackVisible: false,
+            gestureEnabled: false,
           }}
         />
         <Stack.Screen

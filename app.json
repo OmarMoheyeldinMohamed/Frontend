@@ -2,6 +2,8 @@
   "expo": {
     "name": "Mayhem Stats",
     "slug": "Frontend",
+    "privacy": "public",
+    "description": "Keep track of stats for Mayhem",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/logo1.png",

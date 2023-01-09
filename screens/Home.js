@@ -3,7 +3,7 @@ import { Button, StyleSheet, Text, View, Image } from "react-native";
 import MyButton from "../components/MyButton";
 import React, { useEffect } from "react";
 import axios from "axios";
-
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import * as SQLite from "expo-sqlite";
 // const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
@@ -172,111 +172,36 @@ const Home = ({ route, navigation }) => {
       });
   }
 
-  useEffect(() => {
-    // Create all tables if they don't exist
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `DROP TABLE player`,
-    //     [],
-    //     (tx, results) => {
-    //       console.log("Player table dropped", results);
-    //     },
-    //     (tx, error) => {
-    //       console.log("Error dropping player table", error);
-    //     }
-    //   );
-    // });
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `DROP TABLE game`,
-    //     [],
-    //     (tx, results) => {
-    //       console.log("Game table dropped", results);
-    //     },
-    //     (tx, error) => {
-    //       console.log("Error dropping game table", error);
-    //     }
-    //   );
-    // });
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `DROP TABLE actionPerformed`,
-    //     [],
-    //     (tx, results) => {
-    //       console.log("ActionPerformed table dropped", results);
-    //     },
-    //     (tx, error) => {
-    //       console.log("Error dropping actionPerformed table", error);
-    //     }
-    //   );
-    // });
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `CREATE TABLE IF NOT EXISTS player (
-    //       name varchar(25) NOT NULL,
-    //       number int DEFAULT NULL,
-    //       phone varchar(15) DEFAULT NULL,
-    //       major varchar(25) DEFAULT NULL,
-    //       email varchar(50) DEFAULT NULL,
-    //       PRIMARY KEY (name)
-    //     )`,
-    //     [],
-    //     (tx, results) => {
-    //       console.log("Player table created");
-    //     },
-    //     (tx, error) => {
-    //       console.log("Error creating player table");
-    //     }
-    //   );
-    // });
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `CREATE TABLE IF NOT EXISTS game (
-    //       opponent varchar(25) NOT NULL,
-    //       timestamp timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    //       myScore int DEFAULT '-1',
-    //       theirScore int DEFAULT '-1',
-    //       home tinyint(1) DEFAULT NULL,
-    //       category varchar(50) DEFAULT NULL,
-    //       startOffence tinyint(1) DEFAULT '1',
-    //       PRIMARY KEY (timestamp,opponent)
-    //     ) `,
-    //     [],
-    //     (tx, results) => {
-    //       console.log("Game table created");
-    //     },
-    //     (tx, error) => {
-    //       console.log("Error creating game table");
-    //     }
-    //   );
-    // });
-    // db.transaction((tx) => {
-    //   tx.executeSql(
-    //     `CREATE TABLE IF NOT EXISTS actionPerformed (
-    //       opponent varchar(25) NOT NULL,
-    //       gameTimestamp timestamp NOT NULL,
-    //       playerName varchar(25) DEFAULT NULL,
-    //       action varchar(20) NOT NULL,
-    //       id integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-    //       point int NOT NULL,
-    //       associatedPlayer varchar(25) DEFAULT NULL,
-    //       offence tinyint(1) DEFAULT NULL,
-    //       FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp) ON DELETE CASCADE,
-    //       FOREIGN KEY (playerName) REFERENCES player (name),
-    //       FOREIGN KEY (associatedPlayer) REFERENCES player (name)
-    //     )`,
-    //     [],
-    //     (tx, results) => {
-    //       console.log("ActionPerformed table created");
-    //     },
-    //     (tx, error) => {
-    //       console.log("Error creating actionPerformed table");
-    //     }
-    //   );
-    // });
-    // getAllPlayers();
-  }, []);
+  const logout = () => {
+    // delete local storage
 
+    db.transaction((tx) => {
+      tx.executeSql("delete from login;");
+    });
+
+    navigation.navigate("Login", { logout: true });
+  };
+
+  React.useEffect(() => {
+    // Use `setOptions` to update the button that we previously specified
+    // Now the button includes an `onPress` handler to update the count
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={logout}
+          style={({ pressed }) => pressed && { opacity: 0.5 }}
+        >
+          <Image
+            source={require("../assets/logout.png")}
+            style={{
+              width: 25,
+              height: 25,
+            }}
+          />
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={require("../assets/logo.png")} />

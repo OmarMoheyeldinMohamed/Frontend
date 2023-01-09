@@ -38,7 +38,8 @@
     "react-native-segmented-picker": "^2.0.2",
     "react-native-svg": "13.4.0",
     "react-redux": "^8.0.5",
-    "redux": "^4.2.0"
+    "redux": "^4.2.0",
+    "expo-updates": "~0.15.6"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
