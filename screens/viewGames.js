@@ -64,7 +64,41 @@ const ViewGames = ({ navigation, route }) => {
   }
   const onScreenLoad = async () => {
     try {
-      setGames(await getGames());
+      let unsortedGames = await getGames();
+      let sortedGames = unsortedGames.sort((a, b) => {
+        let timestamp = a.timestamp;
+        let year = timestamp.substring(0, 4);
+        let month = timestamp.split("-")[1];
+        let day = timestamp.split("-")[2];
+        day = day.split(" ")[0];
+        let time = timestamp.split(" ")[1];
+        let hour = time.split(":")[0];
+        let minute = time.split(":")[1];
+        let second = time.split(":")[2];
+        let timeStamp = new Date(year, month - 1, day, hour, minute, second);
+
+        let timestamp2 = b.timestamp;
+        let year2 = timestamp2.substring(0, 4);
+        let month2 = timestamp2.split("-")[1];
+        let day2 = timestamp2.split("-")[2];
+        day2 = day2.split(" ")[0];
+        let time2 = timestamp2.split(" ")[1];
+        let hour2 = time2.split(":")[0];
+        let minute2 = time2.split(":")[1];
+        let second2 = time2.split(":")[2];
+        let timeStamp2 = new Date(
+          year2,
+          month2 - 1,
+          day2,
+          hour2,
+          minute2,
+          second2
+        );
+
+        return timeStamp2 - timeStamp;
+      });
+
+      setGames(sortedGames);
     } catch (err) {
       console.log(err);
     }

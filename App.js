@@ -38,6 +38,8 @@ const MyStack = () => {
             headerTitleStyle: {
               fontWeight: "bold",
             },
+            headerBackVisible: false,
+            gestureEnabled: false,
           }}
         />
         <Stack.Screen

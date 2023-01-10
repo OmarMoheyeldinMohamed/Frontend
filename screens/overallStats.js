@@ -14,6 +14,7 @@ let playerImages = {
   Jala: require("../assets/players/Jala.png"),
   Badr: require("../assets/players/Badr.png"),
   Asfar: require("../assets/players/Asfar.png"),
+  Shoaib: require("../assets/players/Shoaib.png"),
   Any: require("../assets/players/Any.png"),
 };
 

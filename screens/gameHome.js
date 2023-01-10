@@ -309,7 +309,7 @@ const GameHome = ({ route, navigation }) => {
     if (status === 1) {
       Alert.alert("Upload successful");
     } else {
-      Alert.alert("Upload failed");
+      Alert.alert("Upload failed", "Server error please try again.");
     }
   }
 
@@ -449,7 +449,7 @@ const GameHome = ({ route, navigation }) => {
     // console.log(values);
 
     // setVisible(false);
-    console.log(values);
+    // console.log(values);
 
     await axios({
       method: "post",

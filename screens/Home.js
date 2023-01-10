@@ -179,7 +179,15 @@ const Home = ({ route, navigation }) => {
       tx.executeSql("delete from login;");
     });
 
-    navigation.navigate("Login", { logout: true });
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: "Login",
+          params: { logout: true },
+        },
+      ],
+    });
   };
 
   React.useEffect(() => {
