@@ -7,8 +7,9 @@ import axios from "axios";
 import * as SQLite from "expo-sqlite";
 import { TextInput } from "react-native-gesture-handler";
 import { useState, useRef } from "react";
-import { Keyboard } from "react-native";
+import { Keyboard, Platform } from "react-native";
 import { Alert } from "react-native";
+import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 
 // const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
@@ -499,30 +500,35 @@ const Login = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require("../assets/logo.png")} />
-      <TextInput
-        keyboardType="email-address"
-        onChangeText={emailInputHandler}
-        style={styles.textInput}
-        value={enteredEmail}
-        returnKeyType="next"
-        autoFocus={true}
-        onSubmitEditing={() => ref_password.current.focus()}
-        blurOnSubmit={false}
-        placeholder="Email"
-      />
-      <TextInput
-        secureTextEntry={true}
-        onChangeText={passwordInputHandler}
-        style={styles.textInput}
-        value={enteredPassword}
-        ref={ref_password}
-        returnKeyType="done"
-        onSubmitEditing={() => Keyboard.dismiss()}
-        placeholder="Password"
-      />
-      <MyButton onPress={onLoginPress} text="Login"></MyButton>
-      <StatusBar style="auto" />
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <Image style={styles.image} source={require("../assets/logo.png")} />
+        <TextInput
+          keyboardType="email-address"
+          onChangeText={emailInputHandler}
+          style={styles.textInput}
+          value={enteredEmail}
+          returnKeyType="next"
+          autoFocus={true}
+          onSubmitEditing={() => ref_password.current.focus()}
+          blurOnSubmit={false}
+          placeholder="Email"
+        />
+        <TextInput
+          secureTextEntry={true}
+          onChangeText={passwordInputHandler}
+          style={styles.textInput}
+          value={enteredPassword}
+          ref={ref_password}
+          returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
+          placeholder="Password"
+        />
+        <MyButton onPress={onLoginPress} text="Login"></MyButton>
+        <StatusBar style="auto" />
+      </KeyboardAvoidingView>
     </View>
   );
 };
@@ -532,6 +538,7 @@ export default Login;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",

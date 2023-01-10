@@ -334,7 +334,7 @@ const AddPlayer = () => {
           placeholder="Name"
           value={enteredPlayer}
           returnKeyType="next"
-          autoFocus={true}
+          // autoFocus={true}
           onSubmitEditing={() => ref_no.current.focus()}
           blurOnSubmit={false}
         />

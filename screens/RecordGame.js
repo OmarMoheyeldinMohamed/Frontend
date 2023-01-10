@@ -14,6 +14,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Modal from "react-native-modal";
 import axios from "axios";
 import * as SQLite from "expo-sqlite";
+import { ScrollView } from "react-native-gesture-handler";
 // const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 
@@ -1922,323 +1923,329 @@ const RecordGame = ({ route, navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Modal
-        onModalShow={onModalShow}
-        isVisible={isModalVisible}
-        onBackButtonPress={toggleModal}
-        onBackdropPress={toggleModal}
-      >
-        <View
-          style={{
-            backgroundColor: "#fff",
-            justifyContent: "center",
-            alignItems: "center",
-            alignContent: "center",
-            padding: 10,
-            borderRadius: 10,
-          }}
+    <ScrollView style={{ width: "100%" }}>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <Modal
+          onModalShow={onModalShow}
+          isVisible={isModalVisible}
+          onBackButtonPress={toggleModal}
+          onBackdropPress={toggleModal}
         >
           <View
             style={{
+              backgroundColor: "#fff",
               justifyContent: "center",
               alignItems: "center",
               alignContent: "center",
-              width: "100%",
+              padding: 10,
+              borderRadius: 10,
             }}
           >
             <View
               style={{
-                flexDirection: "row",
-                // alignContent: "flex-start",
                 justifyContent: "center",
                 alignItems: "center",
-                backgroundColor: "#ffffff",
+                alignContent: "center",
                 width: "100%",
               }}
             >
-              <Text
+              <View
                 style={{
-                  fontSize: 20,
-                  color: "#808080",
-                  alignItems: "center",
+                  flexDirection: "row",
+                  // alignContent: "flex-start",
                   justifyContent: "center",
-                  alignContent: "center",
-                  flex: 1,
+                  alignItems: "center",
+                  backgroundColor: "#ffffff",
+                  width: "100%",
                 }}
               >
-                Field:
-              </Text>
-              <MyButton
-                textSize={11}
-                text={playersOnCourtText[0]}
-                color={onCourtBackgroundColors(playersOnCourtText[0])}
-                textColor={onCourtTextColors(playersOnCourtText[0])}
-                flex={1}
-                padding={11}
-                margin={1}
-                borderWidth={0.5}
-                addNumber={
-                  playersOnCourtText[0] !== "open"
-                    ? playerPointsPlayed[playersOnCourtText[0]] - 1
-                    : null
-                }
-                onPress={() => {
-                  unSelectPlayer(0);
-                }}
-              />
-              <MyButton
-                textSize={11}
-                text={playersOnCourtText[1]}
-                color={onCourtBackgroundColors(playersOnCourtText[1])}
-                textColor={onCourtTextColors(playersOnCourtText[1])}
-                flex={1}
-                padding={11}
-                margin={1}
-                borderWidth={0.5}
-                addNumber={
-                  playersOnCourtText[1] !== "open"
-                    ? playerPointsPlayed[playersOnCourtText[1]] - 1
-                    : null
-                }
-                onPress={() => {
-                  unSelectPlayer(1);
-                }}
-              />
-              <MyButton
-                textSize={11}
-                text={playersOnCourtText[2]}
-                color={onCourtBackgroundColors(playersOnCourtText[2])}
-                textColor={onCourtTextColors(playersOnCourtText[2])}
-                flex={1}
-                padding={11}
-                margin={1}
-                borderWidth={0.5}
-                addNumber={
-                  playersOnCourtText[2] !== "open"
-                    ? playerPointsPlayed[playersOnCourtText[2]] - 1
-                    : null
-                }
-                onPress={() => {
-                  unSelectPlayer(2);
-                }}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignContent: "flex-start",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "#ffffff",
-                width: "100%",
-              }}
-            >
-              <MyButton
-                textSize={11}
-                text={playersOnCourtText[3]}
-                color={onCourtBackgroundColors(playersOnCourtText[3])}
-                textColor={onCourtTextColors(playersOnCourtText[3])}
-                flex={1}
-                padding={11}
-                margin={1}
-                borderWidth={0.5}
-                addNumber={
-                  playersOnCourtText[3] !== "open"
-                    ? playerPointsPlayed[playersOnCourtText[3]] - 1
-                    : null
-                }
-                onPress={() => {
-                  unSelectPlayer(3);
-                }}
-              />
-              <MyButton
-                textSize={11}
-                text={playersOnCourtText[4]}
-                color={onCourtBackgroundColors(playersOnCourtText[4])}
-                textColor={onCourtTextColors(playersOnCourtText[4])}
-                flex={1}
-                padding={11}
-                margin={1}
-                borderWidth={0.5}
-                addNumber={
-                  playersOnCourtText[4] !== "open"
-                    ? playerPointsPlayed[playersOnCourtText[4]] - 1
-                    : null
-                }
-                onPress={() => {
-                  unSelectPlayer(4);
-                }}
-              />
-              <MyButton
-                textSize={11}
-                text={playersOnCourtText[5]}
-                color={onCourtBackgroundColors(playersOnCourtText[5])}
-                textColor={onCourtTextColors(playersOnCourtText[5])}
-                flex={1}
-                padding={11}
-                margin={1}
-                borderWidth={0.5}
-                addNumber={
-                  playersOnCourtText[5] !== "open"
-                    ? playerPointsPlayed[playersOnCourtText[5]] - 1
-                    : null
-                }
-                onPress={() => {
-                  unSelectPlayer(5);
-                }}
-              />
-              <MyButton
-                textSize={11}
-                text={playersOnCourtText[6]}
-                color={onCourtBackgroundColors(playersOnCourtText[6])}
-                textColor={onCourtTextColors(playersOnCourtText[6])}
-                flex={1}
-                padding={11}
-                margin={1}
-                borderWidth={0.5}
-                addNumber={
-                  playersOnCourtText[6] !== "open"
-                    ? playerPointsPlayed[playersOnCourtText[6]] - 1
-                    : null
-                }
-                onPress={() => {
-                  unSelectPlayer(6);
-                }}
-              />
-            </View>
-            <View
-              style={{
-                marginVertical: 10,
-                // backgroundColor: "#ff9f8f",
-                width: "100%",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: "#808080",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  alignContent: "center",
-                }}
-              >
-                Bench:
-              </Text>
-              <View style={{ flex: 0, height: heightBench }}>
-                <FlatList
-                  data={playersOnBench}
-                  renderItem={({ item }) => (
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: "column",
-                        margin: 1,
-                      }}
-                    >
-                      <MyButton
-                        text={item}
-                        flex={1}
-                        margin={1}
-                        verticalPadding={13}
-                        textSize={12}
-                        fontWeight="bold"
-                        addNumber={playerPointsPlayed[item]}
-                        onPress={() => choosePlayer(item)}
-                      />
-                    </View>
-                  )}
-                  //Setting the number of column
-                  numColumns={4}
-                  keyExtractor={(item, index) => item}
+                <Text
+                  style={{
+                    fontSize: 20,
+                    color: "#808080",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    alignContent: "center",
+                    flex: 1,
+                  }}
+                >
+                  Field:
+                </Text>
+                <MyButton
+                  textSize={11}
+                  text={playersOnCourtText[0]}
+                  color={onCourtBackgroundColors(playersOnCourtText[0])}
+                  textColor={onCourtTextColors(playersOnCourtText[0])}
+                  flex={1}
+                  padding={11}
+                  margin={1}
+                  borderWidth={0.5}
+                  addNumber={
+                    playersOnCourtText[0] !== "open"
+                      ? playerPointsPlayed[playersOnCourtText[0]] - 1
+                      : null
+                  }
+                  onPress={() => {
+                    unSelectPlayer(0);
+                  }}
+                />
+                <MyButton
+                  textSize={11}
+                  text={playersOnCourtText[1]}
+                  color={onCourtBackgroundColors(playersOnCourtText[1])}
+                  textColor={onCourtTextColors(playersOnCourtText[1])}
+                  flex={1}
+                  padding={11}
+                  margin={1}
+                  borderWidth={0.5}
+                  addNumber={
+                    playersOnCourtText[1] !== "open"
+                      ? playerPointsPlayed[playersOnCourtText[1]] - 1
+                      : null
+                  }
+                  onPress={() => {
+                    unSelectPlayer(1);
+                  }}
+                />
+                <MyButton
+                  textSize={11}
+                  text={playersOnCourtText[2]}
+                  color={onCourtBackgroundColors(playersOnCourtText[2])}
+                  textColor={onCourtTextColors(playersOnCourtText[2])}
+                  flex={1}
+                  padding={11}
+                  margin={1}
+                  borderWidth={0.5}
+                  addNumber={
+                    playersOnCourtText[2] !== "open"
+                      ? playerPointsPlayed[playersOnCourtText[2]] - 1
+                      : null
+                  }
+                  onPress={() => {
+                    unSelectPlayer(2);
+                  }}
                 />
               </View>
-              <View style={{ margin: 10 }}>
-                <MyButton onPress={toggleModal} text="Done" />
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignContent: "flex-start",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "#ffffff",
+                  width: "100%",
+                }}
+              >
+                <MyButton
+                  textSize={11}
+                  text={playersOnCourtText[3]}
+                  color={onCourtBackgroundColors(playersOnCourtText[3])}
+                  textColor={onCourtTextColors(playersOnCourtText[3])}
+                  flex={1}
+                  padding={11}
+                  margin={1}
+                  borderWidth={0.5}
+                  addNumber={
+                    playersOnCourtText[3] !== "open"
+                      ? playerPointsPlayed[playersOnCourtText[3]] - 1
+                      : null
+                  }
+                  onPress={() => {
+                    unSelectPlayer(3);
+                  }}
+                />
+                <MyButton
+                  textSize={11}
+                  text={playersOnCourtText[4]}
+                  color={onCourtBackgroundColors(playersOnCourtText[4])}
+                  textColor={onCourtTextColors(playersOnCourtText[4])}
+                  flex={1}
+                  padding={11}
+                  margin={1}
+                  borderWidth={0.5}
+                  addNumber={
+                    playersOnCourtText[4] !== "open"
+                      ? playerPointsPlayed[playersOnCourtText[4]] - 1
+                      : null
+                  }
+                  onPress={() => {
+                    unSelectPlayer(4);
+                  }}
+                />
+                <MyButton
+                  textSize={11}
+                  text={playersOnCourtText[5]}
+                  color={onCourtBackgroundColors(playersOnCourtText[5])}
+                  textColor={onCourtTextColors(playersOnCourtText[5])}
+                  flex={1}
+                  padding={11}
+                  margin={1}
+                  borderWidth={0.5}
+                  addNumber={
+                    playersOnCourtText[5] !== "open"
+                      ? playerPointsPlayed[playersOnCourtText[5]] - 1
+                      : null
+                  }
+                  onPress={() => {
+                    unSelectPlayer(5);
+                  }}
+                />
+                <MyButton
+                  textSize={11}
+                  text={playersOnCourtText[6]}
+                  color={onCourtBackgroundColors(playersOnCourtText[6])}
+                  textColor={onCourtTextColors(playersOnCourtText[6])}
+                  flex={1}
+                  padding={11}
+                  margin={1}
+                  borderWidth={0.5}
+                  addNumber={
+                    playersOnCourtText[6] !== "open"
+                      ? playerPointsPlayed[playersOnCourtText[6]] - 1
+                      : null
+                  }
+                  onPress={() => {
+                    unSelectPlayer(6);
+                  }}
+                />
+              </View>
+              <View
+                style={{
+                  marginVertical: 10,
+                  // backgroundColor: "#ff9f8f",
+                  width: "100%",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                    color: "#808080",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    alignContent: "center",
+                  }}
+                >
+                  Bench:
+                </Text>
+                <View style={{ flex: 0, height: heightBench }}>
+                  <FlatList
+                    data={playersOnBench}
+                    renderItem={({ item }) => (
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: "column",
+                          margin: 1,
+                        }}
+                      >
+                        <MyButton
+                          text={item}
+                          flex={1}
+                          margin={1}
+                          verticalPadding={13}
+                          textSize={12}
+                          fontWeight="bold"
+                          addNumber={playerPointsPlayed[item]}
+                          onPress={() => choosePlayer(item)}
+                        />
+                      </View>
+                    )}
+                    //Setting the number of column
+                    numColumns={4}
+                    keyExtractor={(item, index) => item}
+                  />
+                </View>
+                <View style={{ margin: 10 }}>
+                  <MyButton onPress={toggleModal} text="Done" />
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </Modal>
-      <View style={styles.container}>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Image source={mayhemLogo} style={styles.image} />
+        </Modal>
+        <View style={styles.container}>
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <Image source={mayhemLogo} style={styles.image} />
+            <View
+              style={{
+                margin: 10,
+                flexDirection: "column",
+                alignContent: "center",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#fff",
+                flex: 1,
+                // borderBottomWidth: 0.5,
+                paddingBottom: 10,
+              }}
+            >
+              <View style={{ backgroundColor: "#fff", width: "100%" }}>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    textAlign: "center",
+                    fontWeight: "bold",
+                  }}
+                >
+                  Mayhem vs {opponent}
+                </Text>
+                <Text style={{ fontSize: 18, textAlign: "center" }}>
+                  {myScore} - {theirScore}
+                </Text>
+              </View>
+            </View>
+            <Image source={myImage} style={styles.image} />
+          </View>
+
           <View
             style={{
               margin: 10,
-              flexDirection: "column",
+              marginTop: 0,
+              flexDirection: "row",
               alignContent: "center",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: "#fff",
-              flex: 1,
-              // borderBottomWidth: 0.5,
+              alignItems: "flex-start",
+              justifyContent: "flex-start",
+              backgroundColor: "#ffffff",
+              width: "100%",
+              borderTopWidth: 0.5,
+              borderBottomWidth: 0.5,
               paddingBottom: 10,
             }}
           >
-            <View style={{ backgroundColor: "#fff", width: "100%" }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  textAlign: "center",
-                  fontWeight: "bold",
-                }}
-              >
-                Mayhem vs {opponent}
-              </Text>
+            <View style={{ flex: 3, backgroundColor: "#fff" }}>
               <Text style={{ fontSize: 18, textAlign: "center" }}>
-                {myScore} - {theirScore}
+                {onFieldText()}
               </Text>
             </View>
+            <MyButton
+              text="Edit"
+              flex={1}
+              onPress={toggleModal}
+              disabled={disableAllButtons}
+            />
           </View>
-          <Image source={myImage} style={styles.image} />
-        </View>
 
-        <View
-          style={{
-            margin: 10,
-            marginTop: 0,
-            flexDirection: "row",
-            alignContent: "center",
-            alignItems: "flex-start",
-            justifyContent: "flex-start",
-            backgroundColor: "#ffffff",
-            width: "100%",
-            borderTopWidth: 0.5,
-            borderBottomWidth: 0.5,
-            paddingBottom: 10,
-          }}
-        >
-          <View style={{ flex: 3, backgroundColor: "#fff" }}>
-            <Text style={{ fontSize: 18, textAlign: "center" }}>
-              {onFieldText()}
-            </Text>
+          {renderPlayers()}
+
+          <View
+            style={{
+              flexDirection: "row",
+              width: "100%",
+              flex: 1,
+              backgroundColor: "#ffffff",
+            }}
+          >
+            <MyButton text="Undo" onPress={undo} width={80} />
+            <View style={{ flex: 1 }}>{renderPreviousPlays(1)}</View>
           </View>
-          <MyButton
-            text="Edit"
-            flex={1}
-            onPress={toggleModal}
-            disabled={disableAllButtons}
-          />
+          <View style={{ width: "100%", flex: 1 }}>
+            {renderPreviousPlays(0)}
+          </View>
         </View>
-
-        {renderPlayers()}
-
-        <View
-          style={{
-            flexDirection: "row",
-            width: "100%",
-            flex: 1,
-            backgroundColor: "#ffffff",
-          }}
-        >
-          <MyButton text="Undo" onPress={undo} width={80} />
-          <View style={{ flex: 1 }}>{renderPreviousPlays(1)}</View>
-        </View>
-        <View style={{ width: "100%", flex: 1 }}>{renderPreviousPlays(0)}</View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

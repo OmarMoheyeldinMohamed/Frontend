@@ -545,7 +545,7 @@ const GameHome = ({ route, navigation }) => {
           alignItems: "center",
           flex: 1,
           justifyContent: "center",
-          marginBottom: 75,
+          // marginBottom: 75,
         }}
       >
         <MyButton
