@@ -337,15 +337,15 @@ const ViewEvents = ({ route, navigation }) => {
     } else if (curr["action"] === "Defence") {
       description = player + " got a defence";
     } else if (curr["action"] === "Drop") {
-      description = player + " msh 3aref yemsek disc mn " + associatedPlayer;
+      description = player + " dropped a dic from " + associatedPlayer;
     } else if (curr["action"] === "Score") {
-      description = player + " scored a goal, assist " + associatedPlayer;
+      description = player + " scored a goal, assist from " + associatedPlayer;
     } else if (curr["action"] === "Throwaway") {
-      description = player + " mabye3rafsh yermy disc";
+      description = player + " made a throwaway";
     } else if (curr["action"] === "Their Throwaway") {
-      description = "Their Throwaway, good pressure";
+      description = "Their Throwaway";
     } else if (curr["action"] === "They Score") {
-      description = "They got a point, hard luck";
+      description = "They got a point";
     }
 
     return (

@@ -1894,15 +1894,15 @@ const RecordGame = ({ route, navigation }) => {
     } else if (prev["action"] === "Defence") {
       description = player + " got a defence";
     } else if (prev["action"] === "Drop") {
-      description = player + " msh 3aref yemsek disc mn " + associatedPlayer;
+      description = player + " dropped a dic from " + associatedPlayer;
     } else if (prev["action"] === "Score") {
       description = player + " scored a goal, assist " + associatedPlayer;
     } else if (prev["action"] === "Throwaway") {
-      description = player + " mabye3rafsh yermy disc";
+      description = player + " made a throwaway";
     } else if (prev["action"] === "Their Throwaway") {
-      description = "Their Throwaway, good pressure";
+      description = "Their Throwaway.";
     } else if (prev["action"] === "They Score") {
-      description = "They got a point, hard luck";
+      description = "They got a point.";
     }
 
     return (
