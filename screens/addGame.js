@@ -246,6 +246,7 @@ const AddGame = ({ navigation }) => {
     // console.log(toggleCheckBox);
 
     let isHome = toggleCheckBox ? 1 : 0;
+    setVisible(true);
     await axios({
       method: "post",
       url: ip + "/game",
@@ -307,7 +308,9 @@ const AddGame = ({ navigation }) => {
         }
       );
     });
-    navigation.navigate("Home");
+    setVisible(false);
+    navigation.goBack();
+    // navigation.navigate("Home");
   }
 
   return (

@@ -14,7 +14,10 @@ function MyButton(props) {
   let fontWeight = props.fontWeight ? props.fontWeight : "normal";
   let disabled = props.disabled ? props.disabled : false;
   var onPress = props.onPress;
-  let addNumber = props.addNumber ? props.addNumber : null;
+  let addNumber =
+    props.addNumber === null || props.addNumber === undefined
+      ? null
+      : props.addNumber;
 
   if (props.verticalPadding !== undefined) {
     padding = 1;

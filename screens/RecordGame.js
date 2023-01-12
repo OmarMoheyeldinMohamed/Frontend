@@ -466,14 +466,14 @@ const RecordGame = ({ route, navigation }) => {
           if (mypoints === 7) {
             x = !Boolean(route.params.startOffence);
           } else {
-            x = !x;
+            x = false;
           }
         } else {
           theirpoints++;
           if (theirpoints === 7) {
             x = !Boolean(route.params.startOffence);
           } else {
-            x = !x;
+            x = true;
           }
         }
       }
@@ -487,6 +487,15 @@ const RecordGame = ({ route, navigation }) => {
           action.action === "In Point"
         );
       });
+      if (mypoints === 13 || theirpoints === 13) {
+        lastPointPlayers = actionsPerformed.filter((action) => {
+          return (
+            action.point === mypoints + theirpoints &&
+            action.action === "In Point"
+          );
+        });
+        endGame();
+      }
 
       // get players on bench and players in court
 
@@ -1746,6 +1755,9 @@ const RecordGame = ({ route, navigation }) => {
             }
           );
         });
+        if (myScore === 13) {
+          setDisableAllButtons(false);
+        }
         setMyScore(myScore - 1);
         if (lastAction.action === "Score") {
           let possession = lastAction.associatedPlayer;
@@ -1785,6 +1797,9 @@ const RecordGame = ({ route, navigation }) => {
             }
           );
         });
+        if (theirScore === 13) {
+          setDisableAllButtons(false);
+        }
         setTheirScore(theirScore - 1);
         setPlayerInPossession(-1);
         setOnOffense(false);
