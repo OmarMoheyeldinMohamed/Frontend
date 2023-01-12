@@ -194,27 +194,101 @@ const TeamStats = ({ navigation }) => {
     let pie1 = [];
     let pie2 = [];
     let count = 0;
+    // for (let key in noPassesScore) {
+    //   pie1.push({
+    //     name: key,
+    //     value: noPassesScore[key],
+    //     color: pieColors[count % 22],
+    //     legendFontColor: "#7F7F7F",
+    //     legendFontSize: 15,
+    //   });
+    //   count++;
+    // }
+
+    // let newPie1 = [];
+    // // count = 0;
+
+    // console.log("pie1", pie1);
+    // group every range of 5 passes
+    let start = 1;
+    let interval = 4;
+    let passesInInterval = {};
     for (let key in noPassesScore) {
+      if (parseInt(key) >= start && parseInt(key) < start + interval) {
+        if (start in passesInInterval) {
+          passesInInterval[start] += noPassesScore[key];
+        } else {
+          passesInInterval[start] = noPassesScore[key];
+        }
+      } else {
+        let flag = true;
+        while (flag) {
+          start += interval;
+
+          if (parseInt(key) >= start && parseInt(key) < start + interval) {
+            passesInInterval[start] = noPassesScore[key];
+            flag = false;
+          }
+        }
+      }
+    }
+
+    for (let key in passesInInterval) {
       pie1.push({
-        name: key,
-        value: noPassesScore[key],
+        name: key + " - " + (parseInt(key) + interval - 1),
+        value: passesInInterval[key],
         color: pieColors[count % 22],
         legendFontColor: "#7F7F7F",
         legendFontSize: 15,
       });
       count++;
     }
+
     count = 0;
+    // for (let key in noPassesLoss) {
+    //   pie2.push({
+    //     name: key,
+    //     value: noPassesLoss[key],
+    //     color: pieColors[count % 22],
+    //     legendFontColor: "#7F7F7F",
+    //     legendFontSize: 15,
+    //   });
+    //   count++;
+    // }
+
+    passesInInterval = {};
+    start = 0;
     for (let key in noPassesLoss) {
+      if (parseInt(key) >= start && parseInt(key) < start + interval) {
+        if (start in passesInInterval) {
+          passesInInterval[start] += noPassesLoss[key];
+        } else {
+          passesInInterval[start] = noPassesLoss[key];
+        }
+      } else {
+        let flag = true;
+        while (flag) {
+          start += interval;
+
+          if (parseInt(key) >= start && parseInt(key) < start + interval) {
+            passesInInterval[start] = noPassesLoss[key];
+            flag = false;
+          }
+        }
+      }
+    }
+
+    for (let key in passesInInterval) {
       pie2.push({
-        name: key,
-        value: noPassesLoss[key],
+        name: key + " - " + (parseInt(key) + interval - 1),
+        value: passesInInterval[key],
         color: pieColors[count % 22],
         legendFontColor: "#7F7F7F",
         legendFontSize: 15,
       });
       count++;
     }
+
     setPassesScore(pie1);
     setPassesLoss(pie2);
 
