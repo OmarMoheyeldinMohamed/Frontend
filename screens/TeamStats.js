@@ -210,8 +210,8 @@ const TeamStats = ({ navigation }) => {
 
     // console.log("pie1", pie1);
     // group every range of 5 passes
-    let start = 1;
-    let interval = 4;
+    let start = 0;
+    let interval = 5;
     let passesInInterval = {};
     for (let key in noPassesScore) {
       if (parseInt(key) >= start && parseInt(key) < start + interval) {
