@@ -212,6 +212,7 @@ const RecordGame = ({ route, navigation }) => {
       })
     );
     // write to db that player is in point
+    // console.log("timestamp: " + route.params.timestamp);
     new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
@@ -442,6 +443,10 @@ const RecordGame = ({ route, navigation }) => {
     });
 
     // console.log(actionsPerformed);
+    let playersPointsPlayed = {};
+    for (let i = 0; i < allPlayers.current.length; i++) {
+      playersPointsPlayed[allPlayers.current[i]] = 0;
+    }
 
     if (actionsPerformed.length > 0) {
       setModalVisible(false);
@@ -543,10 +548,6 @@ const RecordGame = ({ route, navigation }) => {
 
       // go over all actions and add them to array of actions
       let actions = [];
-      let playersPointsPlayed = {};
-      for (let i = 0; i < allPlayers.current.length; i++) {
-        playersPointsPlayed[allPlayers.current[i]] = 0;
-      }
 
       for (let i = 0; i < actionsPerformed.length; i++) {
         let action = actionsPerformed[i];
@@ -695,6 +696,7 @@ const RecordGame = ({ route, navigation }) => {
       // console.log(route.params.startOffence);
       // console.log("start", x);
       setOnOffense(x);
+      setPlayerPointsPlayed(playersPointsPlayed);
     }
   }
 

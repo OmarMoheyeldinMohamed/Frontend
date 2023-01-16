@@ -289,7 +289,7 @@ const Login = ({ navigation, route }) => {
           point int NOT NULL,
           associatedPlayer varchar(25) DEFAULT NULL,
           offence tinyint(1) DEFAULT NULL,
-          FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp) ON DELETE CASCADE,
+          FOREIGN KEY (gameTimestamp) REFERENCES game (timestamp) ON DELETE CASCADE ON UPDATE CASCADE, 
           FOREIGN KEY (playerName) REFERENCES player (name),
           FOREIGN KEY (associatedPlayer) REFERENCES player (name)
         )`,
@@ -431,20 +431,24 @@ const Login = ({ navigation, route }) => {
       Alert.alert("Please enter email and password");
       return;
     }
+    // console.log("Logging in");
     let players = await new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
           "select name, email, password, isAdmin from player",
           [],
           (_, { rows: { _array } }) => {
+            // console.log("Players", _array);
             resolve(_array);
           },
           (_, error) => {
+            // console.log("Error getting players");
             reject(error);
           }
         );
       });
     });
+    console.log("Players");
     let email = enteredEmail;
     email = email.toLowerCase();
     let password = enteredPassword;

@@ -97,11 +97,16 @@ const ViewGames = ({ navigation, route }) => {
 
         return timeStamp2 - timeStamp;
       });
+      // console.log(sortedGames);
 
       setGames(sortedGames);
     } catch (err) {
       console.log(err);
     }
+
+    // db.exec([{ sql: "PRAGMA foreign_keys = OFF;", args: [] }], false, () =>
+    //   console.log("Foreign keys turned on")
+    // );
   };
   useEffect(() => {
     onScreenLoad();
@@ -161,6 +166,18 @@ const ViewGames = ({ navigation, route }) => {
     await db.transaction((tx) => {
       tx.executeSql(
         "DELETE FROM game WHERE opponent=? AND timestamp=?;",
+        [item.opponent, timestampStr],
+        (tx, results) => {
+          // console.log(results);
+        },
+        (tx, error) => {
+          console.log(error);
+        }
+      );
+    });
+    await db.transaction((tx) => {
+      tx.executeSql(
+        "DELETE FROM actionPerformed WHERE opponent=? AND gameTimestamp=?;",
         [item.opponent, timestampStr],
         (tx, results) => {
           // console.log(results);

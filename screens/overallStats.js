@@ -104,6 +104,13 @@ const OverallStats = ({ navigation }) => {
             // console.log(x.stat);
             return x;
           });
+          // console.log(_array);
+
+          // for (let i = 0; i < _array.length; i++) {
+          //   console.log("array", _array[i]);
+          // }
+
+          // console.log("pointsPlayed", pointsPlayed);
           // add the rest of the players to the array with 0 points played
           playerNames.forEach((player) => {
             let found = false;

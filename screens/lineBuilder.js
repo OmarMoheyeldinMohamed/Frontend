@@ -516,6 +516,10 @@ const LineBuilder = ({ navigation }) => {
     setLine1OffensePoints(offensePoints);
     setLine1DefenseWins(defenseWins);
     setLine1OffenseWins(offenseWins);
+    // console.log("offensePoints", offensePoints);
+    // console.log("defensePoints", defensePoints);
+    // console.log("offenseWins", offenseWins);
+    // console.log("defenseWins", defenseWins);
 
     let offenceEfficiency = 0;
     if (offensePoints > 0) {
