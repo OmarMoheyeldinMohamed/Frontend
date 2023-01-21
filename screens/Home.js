@@ -5,9 +5,30 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
 import * as SQLite from "expo-sqlite";
+import { FlatList } from "react-native-gesture-handler";
+import { Dimensions } from "react-native";
+const screenWidth = Dimensions.get("window").width;
 // const ip = "http://192.168.76.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
+
+/* <MyButton
+        onPress={onPlayerPress}
+        text="Add Player"
+        disabled={!isAdmin}
+      ></MyButton>
+      <MyButton
+        onPress={onAddGamePress}
+        text="Add Game"
+        disabled={!isAdmin}
+      ></MyButton>
+      <MyButton onPress={onViewGamesPress} text="View Games"></MyButton>
+      <MyButton onPress={onViewStatsPress} text="View Overall Stats"></MyButton>
+      <MyButton
+        onPress={onPlayersStatsPress}
+        text="Players Overall Stats"
+      ></MyButton>
+      <MyButton onPress={onTeamStatsPress} text="View Team Stats"></MyButton> */
 
 const Home = ({ route, navigation }) => {
   const isAdmin = route.params.isAdmin;
@@ -172,6 +193,45 @@ const Home = ({ route, navigation }) => {
       });
   }
 
+  const buttons = [
+    {
+      text: "Add Player",
+      onPress: onPlayerPress,
+      disabled: !isAdmin,
+      image: require("../assets/buttonIcons/addPlayer.png"),
+    },
+    {
+      text: "Add Game",
+      onPress: onAddGamePress,
+      disabled: !isAdmin,
+      image: require("../assets/buttonIcons/addGame.png"),
+    },
+    {
+      text: "View Games",
+      onPress: onViewGamesPress,
+      disabled: false,
+      image: require("../assets/buttonIcons/viewGames.png"),
+    },
+    {
+      text: "Overall Stats",
+      onPress: onViewStatsPress,
+      disabled: false,
+      image: require("../assets/buttonIcons/overallStats.png"),
+    },
+    {
+      text: "Players Stats",
+      onPress: onPlayersStatsPress,
+      disabled: false,
+      image: require("../assets/buttonIcons/playerStats.png"),
+    },
+    {
+      text: "Team Stats",
+      onPress: onTeamStatsPress,
+      disabled: false,
+      image: require("../assets/buttonIcons/teamStat.png"),
+    },
+  ];
+
   const logout = () => {
     // delete local storage
 
@@ -212,8 +272,72 @@ const Home = ({ route, navigation }) => {
   }, [navigation]);
   return (
     <View style={styles.container}>
-      <Image style={styles.image} source={require("../assets/logo.png")} />
-      <MyButton
+      <View
+        style={{ flex: 4, alignContent: "center", justifyContent: "center" }}
+      >
+        <Image style={styles.image} source={require("../assets/logo.png")} />
+      </View>
+      <View
+        style={{
+          width: "100%",
+          alignContent: "center",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flex: 5,
+        }}
+      >
+        <FlatList
+          style={{
+            width: "100%",
+
+            // alignItems: "center",
+          }}
+          contentContainerStyle={{
+            alignContent: "space-between",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+          data={buttons}
+          numColumns={3}
+          renderItem={({ item, index }) => {
+            return (
+              <Pressable
+                onPress={item.onPress}
+                style={({ pressed }) => pressed && { opacity: 0.5 }}
+              >
+                <View
+                  style={{
+                    flex: 1,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    padding: 5,
+                    margin: 5,
+                  }}
+                >
+                  <Image
+                    style={{
+                      width: 0.25 * screenWidth,
+                      height: 0.25 * screenWidth,
+                    }}
+                    source={item.image}
+                  ></Image>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontSize: 12,
+                      fontWeight: "500",
+                    }}
+                  >
+                    {item.text}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          }}
+        ></FlatList>
+      </View>
+
+      {/* <MyButton
         onPress={onPlayerPress}
         text="Add Player"
         disabled={!isAdmin}
@@ -229,7 +353,7 @@ const Home = ({ route, navigation }) => {
         onPress={onPlayersStatsPress}
         text="Players Overall Stats"
       ></MyButton>
-      <MyButton onPress={onTeamStatsPress} text="View Team Stats"></MyButton>
+      <MyButton onPress={onTeamStatsPress} text="View Team Stats"></MyButton> */}
       <StatusBar style="auto" />
     </View>
   );
@@ -243,6 +367,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    flexDirection: "column",
   },
   image: {
     width: 200,
