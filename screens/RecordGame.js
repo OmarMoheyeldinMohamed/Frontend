@@ -20,26 +20,26 @@ const ip = "https://mayhembackend.onrender.com";
 
 let mayhemLogo = require("../assets/logo.png");
 let allImages = {
-  supernova: require("../assets/supernova.png"),
-  thunder: require("../assets/thunder.png"),
-  alex: require("../assets/alex.png"),
-  natives: require("../assets/natives.png"),
-  zayed: require("../assets/zayed.png"),
-  airbenders: require("../assets/airbenders.png"),
-  pharos: require("../assets/pharos.png"),
-  mudd: require("../assets/mudd.png"),
-  any: require("../assets/anyOpponent.png"),
+  supernova: require("../assets/Teams/supernova.png"),
+  thunder: require("../assets/Teams/thunder.png"),
+  alex: require("../assets/Teams/alex.png"),
+  natives: require("../assets/Teams/natives.png"),
+  zayed: require("../assets/Teams/zayed.png"),
+  airbenders: require("../assets/Teams/airbenders.png"),
+  pharos: require("../assets/Teams/pharos.png"),
+  mudd: require("../assets/Teams/mudd.png"),
+  any: require("../assets/Teams/anyOpponent.png"),
 };
 let allActionImages = {
-  Catch: require("../assets/catch.png"),
-  Deep: require("../assets/deep.png"),
-  Defence: require("../assets/defense.png"),
-  Drop: require("../assets/drop.png"),
-  Score: require("../assets/score.png"),
-  Throwaway: require("../assets/throwaway.png"),
-  "They Score": require("../assets/their_goal.png"),
-  "Their Throwaway": require("../assets/their_throwaway.png"),
-  Callahan: require("../assets/score.png"),
+  Catch: require("../assets/actions/catch.png"),
+  Deep: require("../assets/actions/deep.png"),
+  Defence: require("../assets/actions/defense.png"),
+  Drop: require("../assets/actions/drop.png"),
+  Score: require("../assets/actions/score.png"),
+  Throwaway: require("../assets/actions/throwaway.png"),
+  "They Score": require("../assets/actions/their_goal.png"),
+  "Their Throwaway": require("../assets/actions/their_throwaway.png"),
+  Callahan: require("../assets/actions/score.png"),
 };
 var myImage;
 

@@ -8,6 +8,14 @@ import { ScrollView } from "react-native-gesture-handler";
 import { ProgressChart } from "react-native-chart-kit";
 import * as SQLite from "expo-sqlite";
 import { Dimensions } from "react-native";
+import {
+  Table,
+  Row,
+  Rows,
+  TableWrapper,
+  Col,
+} from "react-native-table-component";
+
 const screenWidth = Dimensions.get("window").width;
 
 const db = SQLite.openDatabase("game.db");
@@ -636,6 +644,50 @@ const LineBuilder = ({ navigation }) => {
     colors: ["#e6194b", "#3cb44b"],
   };
 
+  const state = {
+    lines: ["L1", "L2"],
+    tableHead: ["", "Won", "Lost", "Total"],
+    tableTitle: ["Offense", "Defense", "Total", "Offense", "Defense", "Total"],
+    tableData: [
+      [
+        line1OffenseWins,
+        line1OffensePoints - line1OffenseWins,
+        line1OffensePoints,
+      ],
+      [
+        line1DefenseWins,
+        line1DefensePoints - line1DefenseWins,
+        line1DefensePoints,
+      ],
+      [
+        line1OffenseWins + line1DefenseWins,
+        line1OffensePoints +
+          line1DefensePoints -
+          line1OffenseWins -
+          line1DefenseWins,
+        line1OffensePoints + line1DefensePoints,
+      ],
+      [
+        line2OffenseWins,
+        line2OffensePoints - line2OffenseWins,
+        line2OffensePoints,
+      ],
+      [
+        line2DefenseWins,
+        line2DefensePoints - line2DefenseWins,
+        line2DefensePoints,
+      ],
+      [
+        line2OffenseWins + line2DefenseWins,
+        line2OffensePoints +
+          line2DefensePoints -
+          line2OffenseWins -
+          line2DefenseWins,
+        line2OffensePoints + line2DefensePoints,
+      ],
+    ],
+  };
+
   return (
     <View
       style={{
@@ -670,9 +722,10 @@ const LineBuilder = ({ navigation }) => {
           }}
         />
       </View>
-      {renderLine1()}
-      {renderLine2()}
       <ScrollView>
+        {renderLine1()}
+        {renderLine2()}
+
         <View style={{ width: "100%" }}>
           <Text style={{ margin: 10, fontSize: 18, fontWeight: "600" }}>
             Line 1 efficiency:{" "}
@@ -684,6 +737,14 @@ const LineBuilder = ({ navigation }) => {
             chartConfig={styles.chartConfig}
             withCustomBarColorFromData={true}
           />
+          <Text style={{ margin: 10, fontSize: 15, fontWeight: "400" }}>
+            Line 1 played together
+            {" " +
+              (line1DefensePoints + line1OffensePoints) +
+              " points, they won " +
+              (line1DefenseWins + line1OffenseWins) +
+              " points"}
+          </Text>
           <View style={{ borderWidth: 0.5, width: "100%" }} />
           <Text style={{ margin: 10, fontSize: 18, fontWeight: "600" }}>
             Line 2 efficiency:{" "}
@@ -695,18 +756,6 @@ const LineBuilder = ({ navigation }) => {
             chartConfig={styles.chartConfig}
             withCustomBarColorFromData={true}
           />
-          <View style={{ borderWidth: 0.5, width: "100%" }} />
-          <Text style={{ margin: 10, fontSize: 18, fontWeight: "600" }}>
-            Summary:{" "}
-          </Text>
-          <Text style={{ margin: 10, fontSize: 15, fontWeight: "400" }}>
-            Line 1 played together
-            {" " +
-              (line1DefensePoints + line1OffensePoints) +
-              " points, they won " +
-              (line1DefenseWins + line1OffenseWins) +
-              " points"}
-          </Text>
           <Text style={{ margin: 10, fontSize: 15, fontWeight: "400" }}>
             Line 2 played together
             {" " +
@@ -715,6 +764,40 @@ const LineBuilder = ({ navigation }) => {
               (line2DefenseWins + line2OffenseWins) +
               " points"}
           </Text>
+          <View style={{ borderWidth: 0.5, width: "100%" }} />
+          <Text style={{ margin: 10, fontSize: 18, fontWeight: "600" }}>
+            Summary:{" "}
+          </Text>
+          <View style={{ width: "100%", padding: 15 }}>
+            <Table borderStyle={{ borderWidth: 2, borderColor: "#c8e1ff" }}>
+              <Row
+                data={state.tableHead}
+                flexArr={[1.5, 1, 1, 1]}
+                style={styles.head}
+                textStyle={styles.text}
+              />
+              <TableWrapper style={styles.wrapper}>
+                <Col
+                  data={state.lines}
+                  style={styles.title2}
+                  // heightArr={[28, 28]}
+                  textStyle={styles.text}
+                />
+                <Col
+                  data={state.tableTitle}
+                  style={styles.title}
+                  heightArr={[28, 28]}
+                  textStyle={styles.text}
+                />
+                <Rows
+                  data={state.tableData}
+                  flexArr={[1, 1, 1]}
+                  style={styles.row}
+                  textStyle={styles.text}
+                />
+              </TableWrapper>
+            </Table>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -744,4 +827,11 @@ const styles = StyleSheet.create({
     // color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   },
+  head: { height: 40, backgroundColor: "#f1f8ff" },
+  wrapper: { flexDirection: "row" },
+  title: { flex: 1, backgroundColor: "#f1f8ff" },
+  title2: { flex: 0.5, backgroundColor: "#f1f8ff" },
+
+  row: { height: 28 },
+  text: { textAlign: "center" },
 });

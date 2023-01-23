@@ -17,6 +17,7 @@
     "expo-checkbox": "~2.2.2",
     "expo-sqlite": "~11.0.0",
     "expo-status-bar": "~1.4.2",
+    "expo-updates": "~0.15.6",
     "immutability-helper": "^3.1.1",
     "lodash": "^4.17.21",
     "lottie-react-native": "^5.1.4",
@@ -37,9 +38,9 @@
     "react-native-searchable-dropdown-custom": "^1.0.0",
     "react-native-segmented-picker": "^2.0.2",
     "react-native-svg": "13.4.0",
+    "react-native-table-component": "^1.2.2",
     "react-redux": "^8.0.5",
-    "redux": "^4.2.0",
-    "expo-updates": "~0.15.6"
+    "redux": "^4.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

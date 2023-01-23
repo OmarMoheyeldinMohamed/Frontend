@@ -234,16 +234,18 @@ const PLayerStats = ({ route, navigation }) => {
           setPlayerThrows(playerThrows);
 
           let piedata = [];
+          let color = 0;
           for (let i = 0; i < playersRef.current.length; i++) {
             piedata.push([]);
+            color = 0;
             for (let j = 0; j < playersRef.current.length; j++) {
-              if (i === j) {
+              if (i === j || playerToPlayer[i][playersRef.current[j]] === 0) {
                 continue;
               }
               piedata[i].push({
                 name: playersRef.current[j],
                 value: playerToPlayer[i][playersRef.current[j]],
-                color: pieColors[j % pieColors.length],
+                color: pieColors[color++ % pieColors.length],
                 legendFontColor: "#000",
                 legendFontSize: 15,
               });
@@ -256,14 +258,15 @@ const PLayerStats = ({ route, navigation }) => {
           let piedata2 = [];
           for (let i = 0; i < playersRef.current.length; i++) {
             piedata2.push([]);
+            color = 0;
             for (let j = 0; j < playersRef.current.length; j++) {
-              if (i === j) {
+              if (i === j || playerFromPlayer[i][playersRef.current[j]] === 0) {
                 continue;
               }
               piedata2[i].push({
                 name: playersRef.current[j],
                 value: playerFromPlayer[i][playersRef.current[j]],
-                color: pieColors[j % pieColors.length],
+                color: pieColors[color++ % pieColors.length],
                 legendFontColor: "#000",
                 legendFontSize: 15,
               });
@@ -271,16 +274,17 @@ const PLayerStats = ({ route, navigation }) => {
           }
 
           let piedata3 = [];
+          color = 0;
           for (let i = 0; i < playersRef.current.length; i++) {
             piedata3.push([]);
             for (let j = 0; j < playersRef.current.length; j++) {
-              if (i === j) {
+              if (i === j || playerDropTo[i][playersRef.current[j]] === 0) {
                 continue;
               }
               piedata3[i].push({
                 name: playersRef.current[j],
                 value: playerDropTo[i][playersRef.current[j]],
-                color: pieColors[j % pieColors.length],
+                color: pieColors[color++ % pieColors.length],
                 legendFontColor: "#000",
                 legendFontSize: 15,
               });
@@ -293,14 +297,15 @@ const PLayerStats = ({ route, navigation }) => {
           let piedata4 = [];
           for (let i = 0; i < playersRef.current.length; i++) {
             piedata4.push([]);
+            color = 0;
             for (let j = 0; j < playersRef.current.length; j++) {
-              if (i === j) {
+              if (i === j || playerDropFrom[i][playersRef.current[j]] === 0) {
                 continue;
               }
               piedata4[i].push({
                 name: playersRef.current[j],
                 value: playerDropFrom[i][playersRef.current[j]],
-                color: pieColors[j % pieColors.length],
+                color: pieColors[color++ % pieColors.length],
                 legendFontColor: "#000",
                 legendFontSize: 15,
               });

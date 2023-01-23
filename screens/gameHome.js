@@ -24,15 +24,15 @@ const ip = "https://mayhembackend.onrender.com";
 
 let mayhemLogo = require("../assets/logo.png");
 let allImages = {
-  supernova: require("../assets/supernova.png"),
-  thunder: require("../assets/thunder.png"),
-  alex: require("../assets/alex.png"),
-  natives: require("../assets/natives.png"),
-  zayed: require("../assets/zayed.png"),
-  airbenders: require("../assets/airbenders.png"),
-  pharos: require("../assets/pharos.png"),
-  mudd: require("../assets/mudd.png"),
-  any: require("../assets/anyOpponent.png"),
+  supernova: require("../assets/Teams/supernova.png"),
+  thunder: require("../assets/Teams/thunder.png"),
+  alex: require("../assets/Teams/alex.png"),
+  natives: require("../assets/Teams/natives.png"),
+  zayed: require("../assets/Teams/zayed.png"),
+  airbenders: require("../assets/Teams/airbenders.png"),
+  pharos: require("../assets/Teams/pharos.png"),
+  mudd: require("../assets/Teams/mudd.png"),
+  any: require("../assets/Teams/anyOpponent.png"),
 };
 
 const GameHome = ({ route, navigation }) => {
