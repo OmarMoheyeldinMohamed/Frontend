@@ -8,7 +8,7 @@ import * as SQLite from "expo-sqlite";
 import { FlatList } from "react-native-gesture-handler";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
-// const ip = "http://192.168.76.177:3000";
+// const ip = "http://192.168.65.177:3000";
 const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
@@ -54,6 +54,10 @@ const Home = ({ route, navigation }) => {
 
   function onTeamStatsPress() {
     navigation.navigate("Team Stats");
+  }
+
+  function onViewPracticesPress() {
+    navigation.navigate("View Practices", { isAdmin: isAdmin });
   }
 
   async function getAllPlayers() {
@@ -229,6 +233,12 @@ const Home = ({ route, navigation }) => {
       onPress: onTeamStatsPress,
       disabled: false,
       image: require("../assets/buttonIcons/teamStat.png"),
+    },
+    {
+      text: "View Attendance",
+      onPress: onViewPracticesPress,
+      disabled: false,
+      image: require("../assets/buttonIcons/attendance.png"),
     },
   ];
 
