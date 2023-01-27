@@ -11,8 +11,8 @@ import { Keyboard, Platform } from "react-native";
 import { Alert } from "react-native";
 import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 
-// const ip = "http://192.168.76.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "http://192.168.65.177:3000";
+// const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
 const Login = ({ navigation, route }) => {
@@ -309,7 +309,8 @@ const Login = ({ navigation, route }) => {
         `CREATE TABLE IF NOT EXISTS practice 
         (
         id INTEGER AUTO_INCREMENT PRIMARY KEY,
-        date DATE NOT NULL
+        date DATE NOT NULL, 
+        lastUpdate INTEGER DEFAULT 0 
         );
         `,
         [],
@@ -330,7 +331,9 @@ const Login = ({ navigation, route }) => {
         playerName varchar(25) NOT NULL,
         isExecused tinyint(1) NOT NULL DEFAULT 0, 
         isAttending tinyint(1) NOT NULL,
-        FOREIGN KEY (playerName) REFERENCES player (name) ON UPDATE CASCADE ON DELETE CASCADE
+        PRIMARY KEY (practiceId, playerName),
+        FOREIGN KEY (playerName) REFERENCES player (name) ON UPDATE CASCADE ON DELETE CASCADE,
+        FOREIGN KEY (practiceId) REFERENCES practice (id) ON UPDATE CASCADE ON DELETE CASCADE
         );`,
         [],
         (tx, results) => {

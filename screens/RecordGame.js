@@ -15,8 +15,8 @@ import Modal from "react-native-modal";
 import axios from "axios";
 import * as SQLite from "expo-sqlite";
 import { ScrollView } from "react-native-gesture-handler";
-// const ip = "http://192.168.76.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "http://192.168.65.177:3000";
+// const ip = "https://mayhembackend.onrender.com";
 
 let mayhemLogo = require("../assets/logo.png");
 let allImages = {

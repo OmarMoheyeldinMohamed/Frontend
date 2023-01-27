@@ -8,8 +8,8 @@ import * as SQLite from "expo-sqlite";
 import { FlatList } from "react-native-gesture-handler";
 import { Dimensions } from "react-native";
 const screenWidth = Dimensions.get("window").width;
-// const ip = "http://192.168.76.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "http://192.168.65.177:3000";
+// const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
 /* <MyButton
@@ -235,10 +235,10 @@ const Home = ({ route, navigation }) => {
       image: require("../assets/buttonIcons/teamStat.png"),
     },
     {
-      text: "View Practices",
+      text: "View Attendance",
       onPress: onViewPracticesPress,
       disabled: false,
-      image: require("../assets/logo.png"),
+      image: require("../assets/buttonIcons/attendance.png"),
     },
   ];
 
