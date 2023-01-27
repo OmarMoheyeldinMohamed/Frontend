@@ -11,8 +11,8 @@ import { Keyboard, Platform } from "react-native";
 import { Alert } from "react-native";
 import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 
-const ip = "http://192.168.65.177:3000";
-// const ip = "https://mayhembackend.onrender.com";
+// const ip = "http://192.168.65.177:3000";
+const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
 const Login = ({ navigation, route }) => {
