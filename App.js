@@ -21,6 +21,7 @@ import TeamStats from "./screens/TeamStats";
 import LineBuilder from "./screens/lineBuilder";
 import Login from "./screens/login";
 import ViewPractices from "./screens/viewPractices";
+import PlayersPractice from "./screens/playersPractice";
 const Stack = createNativeStackNavigator();
 
 const MyStack = () => {
@@ -241,7 +242,20 @@ const MyStack = () => {
             },
           }}
         />
-        {/* NEW */}
+        <Stack.Screen
+          name="Player Attendance"
+          component={PlayersPractice}
+          options={{
+            title: "Player Attendance",
+            headerStyle: {
+              backgroundColor: "#119fb8",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              fontWeight: "bold",
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

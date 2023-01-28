@@ -277,6 +277,10 @@ const GameHome = ({ route, navigation }) => {
     if (myScore !== -1 && theirScore !== -1) {
       setMys(myScore);
       setTheirs(theirScore);
+    } else if (myScore !== -1) {
+      setMys(myScore);
+    } else if (theirScore !== -1) {
+      setTheirs(theirScore);
     }
 
     if (myScore > theirScore) {
