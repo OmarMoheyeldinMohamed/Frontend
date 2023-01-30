@@ -454,7 +454,7 @@ const Login = ({ navigation, route }) => {
     // });
 
     if (logout === true) {
-      return;
+      getAllPlayers();
     } else {
       onScreenLoad();
     }
