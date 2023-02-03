@@ -208,15 +208,18 @@ const AddPlayer = ({ route, navigation }) => {
           text: "Yes",
           style: "destructive",
           onPress: async () => {
+            setVisible(true);
             await axios({
               method: "delete",
               url: ip + "/players/" + playerName,
             })
               .then(function (response) {
+                setVisible(false);
                 return response.data;
               })
               .catch(function (error) {
                 console.log(error);
+                setVisible(false);
               });
             setPlayers((currentPlayers) => {
               return currentPlayers.filter((player) => player !== playerName);
@@ -481,7 +484,7 @@ const styles = StyleSheet.create({
     color: "#120438",
     borderRadius: 8,
     flex: 3,
-    padding: 10,
+    padding: 15,
     margin: 3,
   },
   lottie: {
