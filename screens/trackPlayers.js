@@ -10,8 +10,8 @@ import { Dimensions } from "react-native";
 import Modal from "react-native-modal";
 import { ScrollView } from "react-native-gesture-handler";
 const screenWidth = Dimensions.get("window").width;
-const ip = "http://192.168.1.4:3000";
-// const ip = "https://mayhembackend.onrender.com";
+// const ip = "http://192.168.1.4:3000";
+const ip = "https://mayhembackend.onrender.com";
 const db = SQLite.openDatabase("game.db");
 
 const TrackPlayers = ({ route, navigation }) => {
