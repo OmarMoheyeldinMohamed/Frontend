@@ -32,6 +32,7 @@ const db = SQLite.openDatabase("game.db");
 
 const Home = ({ route, navigation }) => {
   const isAdmin = route.params.isAdmin;
+  const isTreasurer = route.params.isTreasurer;
   function onPlayerPress() {
     navigation.navigate("Add Player", { isAdmin: isAdmin });
   }
@@ -61,6 +62,10 @@ const Home = ({ route, navigation }) => {
   }
   function onViewTracksPress() {
     navigation.navigate("Tracks", { isAdmin: isAdmin });
+  }
+
+  function onTreasuryPress() {
+    navigation.navigate("Treasury", { isTreasurer: isTreasurer });
   }
 
   async function getAllPlayers() {
@@ -248,6 +253,12 @@ const Home = ({ route, navigation }) => {
       onPress: onViewTracksPress,
       disabled: false,
       image: require("../assets/buttonIcons/track.png"),
+    },
+    {
+      text: "Treasury",
+      onPress: onTreasuryPress,
+      disabled: !isTreasurer,
+      image: require("../assets/buttonIcons/treasury.png"),
     },
   ];
 
