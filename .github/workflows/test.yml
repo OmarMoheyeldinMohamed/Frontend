@@ -13,5 +13,5 @@ jobs:
     - name: Check license headers
       run: |
         for file in $(git ls-files | grep -E '\.(h|c)$'); do
-          grep "Hi" $file
+          cat grep "Hi" $file
         done
