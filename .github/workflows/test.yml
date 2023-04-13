@@ -9,12 +9,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
     - name: Check license headers
-      run: |
-        for file in $(git ls-files | grep -E '\.(js|c)$'); do
-          if ! grep -q -F -v "$(cat license/LICENSE_HEADER.txt)" $file; then
-            echo "ERROR: Missing or incorrect license header in file $file"
-            exit 1
-          fi
-        done
+      uses: viperproject/check-license-header@v2
+      with:
+        path: /
+        config: /config.json
+        strict: true
