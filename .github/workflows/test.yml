@@ -12,6 +12,9 @@ jobs:
     - uses: actions/checkout@v3
     - name: Check license headers
       run: |
-        for file in $(git ls-files | grep -E '\.(js|c)$'); do
-          echo "$(cat license/LICENSE_HEADER.txt)"
+        for file in $(git ls-files | grep -E '\.(h|c)$'); do
+          if ! grep -q "$(cat license/LICENSE_HEADER.txt)" $file; then
+            echo "ERROR: Missing or incorrect license header in file $file"
+            exit 1
+          fi
         done
