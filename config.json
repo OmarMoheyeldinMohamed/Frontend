@@ -3,6 +3,6 @@
         "include": [
             "*.js"
         ],
-        "license": "./license/LICENSE_HEADER.txt"
+        "license": "../license/LICENSE_HEADER.txt"
     }
 ]
