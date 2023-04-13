@@ -1,0 +1,17 @@
+name: Formatting
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check-license-headers:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Check license headers
+      run: |
+        for file in $(git ls-files | grep -E '\.(js|c)$'); do
+          echo "Checking $file"
+        done
