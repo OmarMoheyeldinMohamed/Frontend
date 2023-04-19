@@ -1,8 +1,0 @@
-[
-    {
-        "include": [
-            "*.js"
-        ],
-        "license": "../license/LICENSE_HEADER.txt"
-    }
-]
