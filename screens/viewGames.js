@@ -1,3 +1,4 @@
+/* Done */
 import { StatusBar } from "expo-status-bar";
 import {
   Button,
@@ -65,7 +66,8 @@ const ViewGames = ({ navigation, route }) => {
   const onScreenLoad = async () => {
     try {
       let unsortedGames = await getGames();
-      let sortedGames = unsortedGames.sort((a, b) => {
+      let sortedGames = 
+      unsortedGames.sort((a, b) => {
         let timestamp = a.timestamp;
         let year = timestamp.substring(0, 4);
         let month = timestamp.split("-")[1];
@@ -97,8 +99,6 @@ const ViewGames = ({ navigation, route }) => {
 
         return timeStamp2 - timeStamp;
       });
-      // console.log(sortedGames);
-
       setGames(sortedGames);
     } catch (err) {
       console.log(err);
@@ -113,45 +113,18 @@ const ViewGames = ({ navigation, route }) => {
   }, []);
 
   const deleteItemHandler = async (item) => {
-    let year = item.timestamp.substring(0, 4);
-    let month = item.timestamp.split("-")[1];
-    let day = item.timestamp.split("-")[2];
-    day = day.split(" ")[0];
+    var timeStr = item.timestamp;
+    // var parts = timestamp.split(/[- :]/); // Split the timestamp into parts
+    // var utcDate = Date.UTC(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
+    // var date = new Date(utcDate);  
+    // let dateISO = date.toISOString();
+    // let datepart = dateISO.split("T")[0];
+    // let timepart = dateISO.split("T")[1];
+    // timepart = timepart.split(".")[0];
+    // let timeStr = datepart + " " + timepart;
+    // console.log("timeStr", timeStr);
+    // console.log("item", item.timestamp);
 
-    let time = item.timestamp.split(" ")[1];
-    let hour = time.split(":")[0];
-    let minute = time.split(":")[1];
-    let second = time.split(":")[2];
-
-    let date = new Date(year, month - 1, day, hour, minute, second);
-    let axiosDate = new Date(year, month - 1, day, hour, minute, second);
-    axiosDate.setHours(axiosDate.getHours() - 2);
-    // console.log("hi", date);
-    let timestampStr =
-      date.getFullYear() +
-      "-" +
-      (date.getMonth() + 1) +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-
-    let axiosTimestampStr =
-      axiosDate.getFullYear() +
-      "-" +
-      (axiosDate.getMonth() + 1) +
-      "-" +
-      axiosDate.getDate() +
-      " " +
-      axiosDate.getHours() +
-      ":" +
-      axiosDate.getMinutes() +
-      ":" +
-      axiosDate.getSeconds();
 
     // axios
     //   .delete(ip + "/game/" + item.opponent + "/" + axiosTimestampStr)
@@ -166,7 +139,7 @@ const ViewGames = ({ navigation, route }) => {
     await db.transaction((tx) => {
       tx.executeSql(
         "DELETE FROM game WHERE opponent=? AND timestamp=?;",
-        [item.opponent, timestampStr],
+        [item.opponent, timeStr],
         (tx, results) => {
           // console.log(results);
         },
@@ -178,7 +151,7 @@ const ViewGames = ({ navigation, route }) => {
     await db.transaction((tx) => {
       tx.executeSql(
         "DELETE FROM actionPerformed WHERE opponent=? AND gameTimestamp=?;",
-        [item.opponent, timestampStr],
+        [item.opponent, timeStr],
         (tx, results) => {
           // console.log(results);
         },
@@ -202,25 +175,18 @@ const ViewGames = ({ navigation, route }) => {
         //see if game is already in local db
         let onlineGamesCopy = [];
         onlineGames.forEach((game) => {
-          let date = new Date(game.timestamp);
+          let datepart = game.timestamp.split("T")[0];
+          let timepart = game.timestamp.split("T")[1];
+          timepart = timepart.split(".")[0];
+          let timeStr = datepart + " " + timepart;
           let opponent = game.opponent;
-          let timestampStr =
-            date.getFullYear() +
-            "-" +
-            (date.getMonth() + 1) +
-            "-" +
-            date.getDate() +
-            " " +
-            date.getHours() +
-            ":" +
-            date.getMinutes() +
-            ":" +
-            date.getSeconds();
+
+
           let gameExists = false;
           games.forEach((localGame) => {
             if (
               localGame.opponent == opponent &&
-              localGame.timestamp == timestampStr
+              localGame.timestamp == timeStr
             ) {
               gameExists = true;
             }
@@ -249,44 +215,18 @@ const ViewGames = ({ navigation, route }) => {
   }
 
   async function downloadGame(game) {
-    // console.log("game", game);
-    let date = new Date(game.timestamp);
-    let timestampStr =
-      date.getFullYear() +
-      "-" +
-      (date.getMonth() + 1) +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-    let onlineDate = new Date(game.timestamp);
-    onlineDate.setHours(onlineDate.getHours() - 2);
-    let onlineTimestampStr =
-      onlineDate.getFullYear() +
-      "-" +
-      (onlineDate.getMonth() + 1) +
-      "-" +
-      onlineDate.getDate() +
-      " " +
-      onlineDate.getHours() +
-      ":" +
-      onlineDate.getMinutes() +
-      ":" +
-      onlineDate.getSeconds();
+    let datepart = game.timestamp.split("T")[0];
+    let timepart = game.timestamp.split("T")[1];
+    timepart = timepart.split(".")[0];
+    let timeStr = datepart + " " + timepart;
 
     setIsVisible(true);
-
-    // console.log("timestamp", timestampStr);
 
     let onlineActionPerformed = await axios
       .get(
         ip +
           "/gameActions/?timestamp=" +
-          onlineTimestampStr +
+          timeStr +
           "&opponent=" +
           game.opponent
       )
@@ -302,13 +242,14 @@ const ViewGames = ({ navigation, route }) => {
           "Could not connect to server. Please try again later."
         );
       });
+    // console.log("onlineActionPerformed", onlineActionPerformed);
     // setIsVisible(false);
 
     // first delete game if it already exists
     await db.transaction((tx) => {
       tx.executeSql(
         "DELETE FROM game WHERE opponent=? AND timestamp=?;",
-        [game.opponent, timestampStr],
+        [game.opponent, timeStr],
         (tx, results) => {
           // console.log(results);
         },
@@ -327,7 +268,7 @@ const ViewGames = ({ navigation, route }) => {
     await db.transaction((tx) => {
       tx.executeSql(
         "DELETE FROM actionPerformed WHERE gameTimestamp=? AND opponent=?;",
-        [timestampStr, game.opponent],
+        [timeStr, game.opponent],
         (tx, results) => {
           // console.log(results);
         },
@@ -350,7 +291,7 @@ const ViewGames = ({ navigation, route }) => {
         `,
         [
           game.opponent,
-          timestampStr,
+          timeStr,
           game.myScore,
           game.theirScore,
           game.home,
@@ -375,7 +316,7 @@ const ViewGames = ({ navigation, route }) => {
     let values = "";
     for (let i = 0; i < onlineActionPerformed.length; i++) {
       let action = onlineActionPerformed[i];
-      values += "('" + action.opponent + "','" + timestampStr;
+      values += "('" + action.opponent + "','" + timeStr;
       if (action.playerName !== null) {
         values += "','" + action.playerName + "','";
       } else {
@@ -422,24 +363,15 @@ const ViewGames = ({ navigation, route }) => {
 
   function checkDownloadGame(game) {
     // check if game already exists
-    let onlineTimestamp = game.timestamp;
-    let date = new Date(onlineTimestamp);
-    let onlineGameTimestamp =
-      date.getFullYear() +
-      "-" +
-      (date.getMonth() + 1) +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
+    let datepart = game.timestamp.split("T")[0];
+    let timepart = game.timestamp.split("T")[1];
+    timepart = timepart.split(".")[0];
+    let timeStr = datepart + " " + timepart;
+
     let found = false;
     for (let i = 0; i < games.length; i++) {
       let localTimestamp = games[i].timestamp;
-      if (localTimestamp === onlineGameTimestamp) {
+      if (localTimestamp === timeStr) {
         found = true;
       }
     }
@@ -589,7 +521,7 @@ const ViewGames = ({ navigation, route }) => {
         >
           <LottieView
             source={require("../assets/loading.json")}
-            style={styles.lottie}
+            style={styles.lottie} 
             autoPlay
           />
           <Text>Downloading Game...</Text>

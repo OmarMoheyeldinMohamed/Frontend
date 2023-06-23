@@ -44,6 +44,7 @@ function GameItem(props) {
   var home = props.content ? props.content.home : "Home";
   var category = props.content ? props.content.category : "Category";
 
+
   let year = timestamp.substring(0, 4);
   let month = timestamp.split("-")[1];
   let day = timestamp.split("-")[2];
@@ -53,9 +54,9 @@ function GameItem(props) {
   let hour = time.split(":")[0];
   let minute = time.split(":")[1];
   let second = time.split(":")[2];
-
+  
   let date = new Date(year, month - 1, day, hour, minute, second);
-  let dateStr =
+  let dateStr = 
     date.getDate() + "-" + (date.getMonth() + 1) + "-" + date.getFullYear();
 
   let winlossStr = "";

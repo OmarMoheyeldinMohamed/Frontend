@@ -508,38 +508,94 @@ const Login = ({ navigation, route }) => {
           "select * from updates",
           [],
           async (_, { rows: { _array } }) => {
-            if (_array.length > 0) {
+            if (_array.length > 0 && _array[0].number === 1) {
               resolve(_array[0].number);
-            } else {
-              await new Promise((resolve, reject) => {
-                db.transaction((tx) => {
-                  tx.executeSql(
-                    "insert into updates (number) values (0)",
-                    [],
-                    (_, { rows: { _array } }) => {
-                      resolve(0);
-                    },
-                    (_, error) => {
-                      reject(error);
-                    }
-                  );
-                });
-              });
-              await new Promise((resolve, reject) => {
-                db.transaction((tx) => {
-                  tx.executeSql(
-                    "ALTER TABLE player ADD COLUMN isTreasurer tinyint(1) DEFAULT 0;",
-                    [],
-                    (_, { rows: { _array } }) => {
-                      resolve(0);
-                    },
-                    (_, error) => {
-                      reject(error);
-                    }
-                  );
-                });
-              });
             }
+            else{
+              if (_array.length === 0)
+              {
+                await new Promise((resolve, reject) => {
+                  db.transaction((tx) => {
+                    tx.executeSql(
+                      "insert into updates (number) values (0)",
+                      [],
+                      (_, { rows: { _array } }) => {
+                        resolve(0);
+                      },
+                      (_, error) => {
+                        reject(error);
+                      }
+                    );
+                  });
+                });
+                await new Promise((resolve, reject) => {
+                  db.transaction((tx) => {
+                    tx.executeSql(
+                      "ALTER TABLE player ADD COLUMN isTreasurer tinyint(1) DEFAULT 0;",
+                      [],
+                      (_, { rows: { _array } }) => {
+                        resolve(0);
+                      },
+                      (_, error) => {
+                        reject(error);
+                      }
+                    );
+                  });
+                });
+              }
+              // delete all games from local storage and all actions performed in actionPerfomed table
+              await new Promise((resolve, reject) => {
+                db.transaction((tx) => {
+                  tx.executeSql(
+                    "delete from game;",
+                    [],
+                    (_, { rows: { _array } }) => {
+                      resolve(_array);
+                    },
+                    (_, error) => {
+                      reject(error);
+                    }
+                  );
+                });
+              }
+              );
+              await new Promise((resolve, reject) => {
+                db.transaction((tx) => {
+                  tx.executeSql(
+                    "delete from actionPerformed;",
+                    [],
+                    (_, { rows: { _array } }) => {
+                      resolve(_array);
+                    },
+                    (_, error) => {
+                      reject(error);
+                    }
+                  );
+                });
+              }
+              );
+
+              // set number to 1
+              await new Promise((resolve, reject) => {
+                db.transaction((tx) => {
+                  tx.executeSql(
+                    "update updates set number = 1;",
+                    [],
+                    (_, { rows: { _array } }) => {
+                      resolve(_array);
+                    },
+                    (_, error) => {
+                      reject(error);
+                    }
+                  );
+                });
+              }
+              );
+              
+              resolve(0);
+            } 
+            
+            
           },
           (_, error) => {
             reject(error);

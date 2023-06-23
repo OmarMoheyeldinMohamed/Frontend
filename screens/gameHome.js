@@ -39,7 +39,6 @@ const GameHome = ({ route, navigation }) => {
   const db = SQLite.openDatabase("game.db");
 
   const [isCheckBoxDisabled, setIsCheckboxDisabled] = useState(false);
-  console.log(isCheckBoxDisabled);
 
   const [visible, setVisible] = useState(false);
   const isSuccessfull = useRef(false);
@@ -53,31 +52,8 @@ const GameHome = ({ route, navigation }) => {
     theirScore,
   } = route.params.game;
   const isAdmin = route.params.isAdmin;
-  let year = timestamp.substring(0, 4);
-  let month = timestamp.split("-")[1];
-  let day = timestamp.split("-")[2];
-  day = day.split(" ")[0];
-  let time = timestamp.split(" ")[1];
-  let hour = time.split(":")[0];
-  let minute = time.split(":")[1];
-  let second = time.split(":")[2];
-  let timeStamp = new Date(year, month - 1, day, hour, minute, second);
 
-  let timeStr =
-    timeStamp.getFullYear() +
-    "-" +
-    (timeStamp.getMonth() + 1) +
-    "-" +
-    timeStamp.getDate() +
-    " " +
-    timeStamp.getHours() +
-    ":" +
-    timeStamp.getMinutes() +
-    ":" +
-    timeStamp.getSeconds();
 
-  // console.log("str", timeStr);
-  // console.log("ts", timestamp);
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
   function changeCheckbox() {
@@ -96,28 +72,12 @@ const GameHome = ({ route, navigation }) => {
 
     setToggleCheckBox(newValue);
 
-    // let timeStamp = new Date(timestamp);
-    // // timeStr to be used in sql query
-    // let timeStr =
-    //   timeStamp.getFullYear() +
-    //   "-" +
-    //   (timeStamp.getMonth() + 1) +
-    //   "-" +
-    //   timeStamp.getDate() +
-    //   " " +
-    //   timeStamp.getHours() +
-    //   ":" +
-    //   timeStamp.getMinutes() +
-    //   ":" +
-    //   timeStamp.getSeconds();
-
-    // console.log(timeStr);
     await db.transaction((tx) => {
       tx.executeSql(
         `
         UPDATE game SET startOffence = ${
           newValue ? 1 : 0
-        } WHERE timestamp = "${timeStr}" AND opponent = "${opponent}";
+        } WHERE timestamp = "${timestamp}" AND opponent = "${opponent}";
         `,
         null,
         (tx, results) => {
@@ -130,26 +90,13 @@ const GameHome = ({ route, navigation }) => {
       );
     });
 
-    let axiosTimeStamp = new Date(year, month - 1, day, hour, minute, second);
-    axiosTimeStamp.setHours(axiosTimeStamp.getHours() - 2);
-    let axiosTimeStr =
-      axiosTimeStamp.getFullYear() +
-      "-" +
-      (axiosTimeStamp.getMonth() + 1) +
-      "-" +
-      axiosTimeStamp.getDate() +
-      " " +
-      axiosTimeStamp.getHours() +
-      ":" +
-      axiosTimeStamp.getMinutes() +
-      ":" +
-      axiosTimeStamp.getSeconds();
+    
 
     axios({
       method: "put",
       url: ip + "/gameUpdateOffence",
       data: {
-        timestamp: axiosTimeStr,
+        timestamp: timestamp,
         opponent: opponent,
         newValue: newValue,
       },
@@ -174,7 +121,7 @@ const GameHome = ({ route, navigation }) => {
             <Text style={styles.text}>Tournament:</Text>
           </View>
           <View>
-            <Text style={styles.text2}>{timeStr}</Text>
+            <Text style={styles.text2}>{timestamp}</Text>
             <Text style={styles.text2}>{opponent}</Text>
             <Text style={styles.text2}>{category}</Text>
           </View>
@@ -201,44 +148,17 @@ const GameHome = ({ route, navigation }) => {
   }
 
   function onScreenLoad() {
-    let year = timestamp.substring(0, 4);
-    let month = timestamp.split("-")[1];
-    let day = timestamp.split("-")[2];
-    day = day.split(" ")[0];
-
-    let time = timestamp.split(" ")[1];
-    let hour = time.split(":")[0];
-    let minute = time.split(":")[1];
-    let second = time.split(":")[2];
-
-    let timeStamp = new Date(year, month - 1, day, hour, minute, second);
-
-    // timeStr to be used in sql query
-    let timeStr =
-      timeStamp.getFullYear() +
-      "-" +
-      (timeStamp.getMonth() + 1) +
-      "-" +
-      timeStamp.getDate() +
-      " " +
-      timeStamp.getHours() +
-      ":" +
-      timeStamp.getMinutes() +
-      ":" +
-      timeStamp.getSeconds();
-
-    // console.log(timeStr);
+    // console.log(timestamp);
 
     // console.log(opponent);
 
     db.transaction((tx) => {
       tx.executeSql(
         `
-        SELECT startOffence FROM game WHERE timestamp = "${timeStr}" AND opponent = "${opponent}";
+        SELECT startOffence FROM game WHERE timestamp = "${timestamp}" AND opponent = "${opponent}";
         `,
         null,
         (tx, results) => {
-          // console.log("Query completed");
           // console.log(results);
           if (results.rows._array[0].startOffence === 1) {
             setToggleCheckBox(true);
@@ -255,7 +175,7 @@ const GameHome = ({ route, navigation }) => {
     db.transaction((tx) => {
       tx.executeSql(
         `
-        SELECT COUNT(*) FROM actionPerformed WHERE gameTimestamp = "${timeStr}" AND opponent = "${opponent}";
+        SELECT COUNT(*) FROM actionPerformed WHERE gameTimestamp = "${timestamp}" AND opponent = "${opponent}";
         `,
         null,
         (tx, results) => {
@@ -327,23 +247,10 @@ const GameHome = ({ route, navigation }) => {
     // first delete all records for this game on the server
     setVisible(true);
     isSuccessfull.current = true;
-    let axiosTimeStamp = new Date(year, month - 1, day, hour, minute, second);
-    axiosTimeStamp.setHours(axiosTimeStamp.getHours() - 2);
-    let axiosTimeStr =
-      axiosTimeStamp.getFullYear() +
-      "-" +
-      (axiosTimeStamp.getMonth() + 1) +
-      "-" +
-      axiosTimeStamp.getDate() +
-      " " +
-      axiosTimeStamp.getHours() +
-      ":" +
-      axiosTimeStamp.getMinutes() +
-      ":" +
-      axiosTimeStamp.getSeconds();
+
     await axios({
       method: "delete",
-      url: ip + "/game/" + opponent + "/" + axiosTimeStr,
+      url: ip + "/game/" + opponent + "/" + timestamp,
       data: {},
     })
       .then(function (response) {
@@ -356,7 +263,7 @@ const GameHome = ({ route, navigation }) => {
       });
     await axios({
       method: "delete",
-      url: ip + "/gameActions/" + opponent + "/" + axiosTimeStr,
+      url: ip + "/gameActions/" + opponent + "/" + timestamp,
       data: {},
     })
       .then(function (response) {
@@ -396,7 +303,7 @@ const GameHome = ({ route, navigation }) => {
       url: ip + "/gameDetails",
       data: {
         opponent: gameDetails.opponent,
-        timestamp: axiosTimeStr,
+        timestamp: timestamp,
         myScore: gameDetails.myScore,
         theirScore: gameDetails.theirScore,
         isHome: gameDetails.home,
@@ -437,7 +344,7 @@ const GameHome = ({ route, navigation }) => {
     // TODO: update to include offense / defence
     let values = "";
     for (let i = 0; i < gameActions.length; i++) {
-      values += "('" + gameActions[i].opponent + "','" + axiosTimeStr;
+      values += "('" + gameActions[i].opponent + "','" + timestamp;
       if (gameActions[i].playerName !== null) {
         values += "','" + gameActions[i].playerName + "','";
       } else {
@@ -562,7 +469,7 @@ const GameHome = ({ route, navigation }) => {
           onPress={() =>
             navigation.navigate("Record Game", {
               opponent: opponent,
-              timestamp: timeStr,
+              timestamp: timestamp,
               startOffence: Boolean(toggleCheckBox),
             })
           }
@@ -572,7 +479,7 @@ const GameHome = ({ route, navigation }) => {
           onPress={() =>
             navigation.navigate("View Game Events", {
               opponent: opponent,
-              timestamp: timeStr,
+              timestamp: timestamp,
             })
           }
           text={"View Events"}
@@ -581,7 +488,7 @@ const GameHome = ({ route, navigation }) => {
           onPress={() =>
             navigation.navigate("View Game Stats", {
               opponent: opponent,
-              timestamp: timeStr,
+              timestamp: timestamp,
             })
           }
           text={"View Stats"}
@@ -590,7 +497,7 @@ const GameHome = ({ route, navigation }) => {
           onPress={() =>
             navigation.navigate("View Player Stats", {
               opponent: opponent,
-              timestamp: timeStr,
+              timestamp: timestamp,
             })
           }
           text={"Player Stats"}

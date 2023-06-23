@@ -33,6 +33,7 @@ const db = SQLite.openDatabase("game.db");
 const Home = ({ route, navigation }) => {
   const isAdmin = route.params.isAdmin;
   const isTreasurer = route.params.isTreasurer;
+  // console.log(isAdmin);
   function onPlayerPress() {
     navigation.navigate("Add Player", { isAdmin: isAdmin });
   }

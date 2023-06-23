@@ -1,3 +1,4 @@
+/* Done */
 import React, { useRef, useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
@@ -92,7 +93,7 @@ async function addOpponenttoDB(name) {
     });
 }
 
-const AddGame = ({ navigation, route }) => {
+const AddGame = ({ route, navigation }) => {
   const isAdmin = route.params.isAdmin;
   const db = SQLite.openDatabase("game.db");
   const [visible, setVisible] = useState(true);
@@ -137,6 +138,28 @@ const AddGame = ({ navigation, route }) => {
     } catch (err) {
       console.log(err);
     }
+    try {
+      // get local games
+      db.transaction((tx) => {
+        tx.executeSql(
+          `
+        SELECT * FROM game;
+        `,
+          null,
+          (tx, results) => {
+            // console.log("Query completed");
+            // console.log(results.rows);
+          },
+          (tx, error) => {
+            console.log("Error: " + error);
+          }
+        );
+      }
+      );
+    } catch (err) {
+      console.log(err);
+    }
+
   };
 
   useEffect(() => {
@@ -279,22 +302,18 @@ const AddGame = ({ navigation, route }) => {
       });
 
     //add the game to the local database
-    let date = new Date(timestamp);
-    let timeStr =
-      date.getFullYear() +
-      "-" +
-      (date.getMonth() + 1) +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
+    console.log(timestamp);
+    // timestamp is an ISO string we need to convert to this format "YYYY-MM-DD HH:MM:SS"
+    let datepart = timestamp.split("T")[0];
+    let timepart = timestamp.split("T")[1];
+    timepart = timepart.split(".")[0];
+    let timeStr = datepart + " " + timepart;
+    console.log(timeStr);
+
+   
+
 
     db.transaction((tx) => {
-      console.log(timeStr);
       tx.executeSql(
         `
         INSERT INTO game (opponent, home, category, timestamp) VALUES ('${selectedOpponent}', '${isHome}', '${selectedCompetition}', '${timeStr}');
@@ -311,7 +330,6 @@ const AddGame = ({ navigation, route }) => {
     });
     setVisible(false);
     navigation.goBack();
-    // navigation.navigate("Home");
   }
 
   return (
