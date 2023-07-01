@@ -29,6 +29,7 @@
     "react-native-charts-wrapper": "^0.5.11",
     "react-native-dropdown-listpicker": "^1.1.4",
     "react-native-dropdown-menu": "^2.0.0",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-dropdown-select-list": "^2.0.4",
     "react-native-gesture-handler": "~2.8.0",
     "react-native-modal": "^13.0.1",

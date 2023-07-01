@@ -17,6 +17,14 @@ import {
   PieChart,
 } from "react-native-chart-kit";
 import { Dimensions } from "react-native";
+import Pressable from "react-native/Libraries/Components/Pressable/Pressable";
+import Modal from "react-native-modal";
+import DropDownPicker from "react-native-dropdown-picker";
+import LottieView from "lottie-react-native";
+const myTheme = require("../Theme/my-theme/index.js");
+
+DropDownPicker.addTheme("MyThemeName", myTheme);
+DropDownPicker.setTheme("MyThemeName");
 
 import * as SQLite from "expo-sqlite";
 
@@ -57,12 +65,77 @@ const TeamStats = ({ navigation }) => {
   const [defenseScore, setDefenseScore] = useState(0);
   const [passesScore, setPassesScore] = useState([]);
   const [passesLoss, setPassesLoss] = useState([]);
+  const [isModalVisible, setModalVisible] = React.useState(false);
+  const [open, setOpen] = useState(true);
+  const [value, setValue] = useState(null);
+  const [items, setItems] = useState([]);
+  const [heightOfDropdown, setHeightOfDropdown] = React.useState(0);
+  let selectedGames = [];
+  const [allGames, setAllGames] = React.useState([]);
+  const [visible, setVisible] = React.useState(false);
+
+  const onLayout = (event) => {
+    const { x, y, height, width } = event.nativeEvent.layout;
+    setHeightOfDropdown(height);
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+  const filter = () => {
+    toggleModal();
+  };
+
+  React.useEffect(() => {
+    // Use `setOptions` to update the button that we previously specified
+    // Now the button includes an `onPress` handler to update the count
+    navigation.setOptions({
+      headerRight: () => (
+        <Pressable
+          onPress={filter}
+          style={({ pressed }) => pressed && { opacity: 0.5 }}
+        >
+          <Image
+            source={require("../assets/filter.png")}
+            style={{
+              width: 25,
+              height: 25,
+            }}
+          />
+        </Pressable>
+      ),
+    });
+  }, [navigation]);
 
   async function getData() {
+    setVisible(true);
+
+    let sqlactions = `select * from actionPerformed where (action = "Score" OR action = "Callahan" OR action = "They Score" OR action = "Drop" OR action = "Throwaway" OR action="Catch" or action="Deep")`;
+    let sqlgames = `select * from game`;
+
+    if (selectedGames.length === 0) {
+      sqlactions += ";";
+      sqlgames += ";";
+    } else {
+      let selectedGamesString = "(";
+      for (let i = 0; i < selectedGames.length; i++) {
+        selectedGamesString += "'" + selectedGames[i] + "',";
+      }
+      selectedGamesString = selectedGamesString.substring(
+        0,
+        selectedGamesString.length - 1
+      );
+      selectedGamesString += ")";
+
+      sqlactions += " AND gameTimestamp in " + selectedGamesString + ";";
+      sqlgames += " WHERE timestamp in " + selectedGamesString + ";";
+    }
+
     let actions = await new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          `select * from actionPerformed where action = "Score" OR action = "Callahan" OR action = "They Score" OR action = "Drop" OR action = "Throwaway" OR action="Catch" or action="Deep";`,
+          sqlactions,
           [],
           (_, { rows: { _array } }) => {
             resolve(_array);
@@ -77,7 +150,7 @@ const TeamStats = ({ navigation }) => {
     let games = await new Promise((resolve, reject) => {
       db.transaction((tx) => {
         tx.executeSql(
-          `select * from game;`,
+          sqlgames,
           [],
           (_, { rows: { _array } }) => {
             resolve(_array);
@@ -292,12 +365,67 @@ const TeamStats = ({ navigation }) => {
     setPassesScore(pie1);
     setPassesLoss(pie2);
 
-    // console.log("Score", noPassesScore);
-    // console.log("Loss", noPassesLoss);
+    setVisible(false);
   }
+
+  const getGameCategories = async () => {
+    let allGames = await new Promise((resolve, reject) => {
+      db.transaction((tx) => {
+        tx.executeSql(
+          "SELECT opponent, category, timestamp FROM game;",
+          [],
+          (_, { rows: { _array } }) => {
+            resolve(_array);
+          },
+          (_, error) => {
+            reject(error);
+          }
+        );
+      });
+    });
+
+    let tempGameCategories = {};
+
+    for (let i = 0; i < allGames.length; i++) {
+      let game = allGames[i];
+      if (tempGameCategories[game.category] === undefined) {
+        tempGameCategories[game.category] = [
+          { opponent: game.opponent, timestamp: game.timestamp },
+        ];
+      } else {
+        tempGameCategories[game.category].push({
+          opponent: game.opponent,
+          timestamp: game.timestamp,
+        });
+      }
+    }
+
+    setAllGames(tempGameCategories);
+
+    let tempItems = [];
+    for (let key in tempGameCategories) {
+      let tempItem = {
+        label: key,
+        value: key,
+        parent: null,
+      };
+      tempItems.push(tempItem);
+      for (let i = 0; i < tempGameCategories[key].length; i++) {
+        let tempSubItem = {
+          label: tempGameCategories[key][i].opponent,
+          value: tempGameCategories[key][i].timestamp,
+          parent: key,
+        };
+        tempItems.push(tempSubItem);
+      }
+    }
+
+    setItems(tempItems);
+  };
   useEffect(() => {
     // get actionPerformed table
     getData();
+    getGameCategories();
   }, []);
 
   const progressData = {
@@ -307,6 +435,22 @@ const TeamStats = ({ navigation }) => {
         ? [offenseScore / offensePoints, defenseScore / defensePoints]
         : [0, 0],
     colors: ["#e6194b", "#3cb44b", "#4363d8"],
+  };
+
+  const applyFilter = () => {
+    toggleModal();
+    let tempSelectedGames = [];
+    for (let i = 0; i < value.length; i++) {
+      if (value[i] in allGames) {
+        for (let j = 0; j < allGames[value[i]].length; j++) {
+          tempSelectedGames.push(allGames[value[i]][j].timestamp);
+        }
+      } else {
+        tempSelectedGames.push(value[i]);
+      }
+    }
+    selectedGames = tempSelectedGames;
+    getData();
   };
 
   return (
@@ -387,6 +531,74 @@ const TeamStats = ({ navigation }) => {
           />
         </View>
       </ScrollView>
+      <Modal
+        isVisible={isModalVisible}
+        onBackButtonPress={toggleModal}
+        onBackdropPress={toggleModal}
+      >
+        <View
+          style={{
+            height: "90%",
+            justifyContent: "flex-start",
+            alignItems: "center",
+            alignContent: "center",
+            width: "100%",
+            backgroundColor: "white",
+            flexDirection: "column",
+          }}
+        >
+          <Text style={{ fontSize: 20, fontWeight: "bold", margin: 20 }}>
+            Filter Games:
+          </Text>
+          <View style={{ padding: 10, flex: 1 }} onLayout={onLayout}>
+            <DropDownPicker
+              open={open}
+              value={value}
+              items={items}
+              setOpen={setOpen}
+              setValue={setValue}
+              setItems={setItems}
+              theme="MyThemeName"
+              multiple={true}
+              mode="BADGE"
+              badgeDotColors={[
+                "#e76f51",
+                "#00b4d8",
+                "#e9c46a",
+                "#e76f51",
+                "#8ac926",
+                "#00b4d8",
+                "#e9c46a",
+              ]}
+              placeholder="Select Games"
+              // max height = parent height - 20
+              maxHeight={heightOfDropdown - 60}
+            />
+          </View>
+          <MyButton text="Apply" onPress={applyFilter} />
+        </View>
+      </Modal>
+      {visible && (
+        <View
+          style={{
+            position: "absolute",
+            backgroundColor: "#fff",
+            opacity: 0.5,
+            backfaceVisibility: "visible",
+            width: "100%",
+            height: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <LottieView
+            source={require("../assets/loading.json")}
+            style={styles.lottie}
+            autoPlay
+          />
+          <Text>Loading...</Text>
+        </View>
+      )}
     </View>
   );
 };
@@ -413,5 +625,9 @@ const styles = StyleSheet.create({
     backgroundGradientToOpacity: 1,
     // color: (opacity = 1) => `rgba(26, 255, 146, ${opacity})`,
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+  },
+  lottie: {
+    width: 200,
+    height: 200,
   },
 });
