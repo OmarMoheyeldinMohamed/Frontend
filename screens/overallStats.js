@@ -15,25 +15,6 @@ DropDownPicker.addTheme("MyThemeName", myTheme);
 DropDownPicker.setTheme("MyThemeName");
 
 let playerImages = {
-  // Mohey: { uri : "https://drive.google.com/uc?export=view&id=1LiRgCLsAcX4xAaqCkM8vhH3Q1U92MFy7"},
-  // Mini: { uri : "https://drive.google.com/uc?export=view&id=1JCExJ4wWZT8wEGdr8E9uEKKAb0Mh-67t"},
-  // Mariam: { uri : "https://drive.google.com/uc?export=view&id=1NJEe1fsi16V-IY8wgIaFV5g_hCjxBmvM"},
-  // Lord: { uri : "https://drive.google.com/uc?export=view&id=1i1HoGDYtgn-C5Ja3ay6HKvSrfoUo9lXM"},
-  // Jala: { uri : "https://drive.google.com/uc?export=view&id=1J8o0dKo1umKyfoqI_-vk3tvoCO9gHUqQ"},
-  // Badr: { uri : "https://drive.google.com/uc?export=view&id=1XxeBp9EqeEt0QL9NztsUdGe5a9O_nClP"},
-  // Asfar: { uri : "https://drive.google.com/uc?export=view&id=1HVfrrHkcFta--YoVMqfRDZPKsdyr9fCq"},
-  // Shoaib: { uri : "https://drive.google.com/uc?export=view&id=1OhyF-Xel0lxBbP5TEqYWnmBbXfyVoLwS"},
-  // Shady: { uri : "https://drive.google.com/uc?export=view&id=1bwIYdPHTlfIB9dH3N6atcgnzaRDEl2I-"},
-  // Akram: { uri : "https://drive.google.com/uc?export=view&id=1BkKMs6LlTMTtdEmc7wCXmhYlkjwXUXcC"},
-  // Nour:  { uri : "https://drive.google.com/uc?export=view&id=1QvpXOLXlBQS-j8NTM_u1XeeKQNNxlPoA"},
-  // Tifa:  { uri : "https://drive.google.com/uc?export=view&id=1kx3AlOkOkGfe-9_FAuFN3BOXzR0I_2Xa"},
-  // Gamal: { uri : "https://drive.google.com/uc?export=view&id=1GNMZATNtZdJvjbniN1jE6UMkGgR1YdWM"},
-  // Jana:  { uri : "https://drive.google.com/uc?export=view&id=1LL4QMofYbDzQOLyw4D4VUSEzmacBzU2X"},
-  // Judy:  { uri : "https://drive.google.com/uc?export=view&id=1Uepl1OyKM-DtZ68C1U5GbZp57KUSEbOe"},
-  // Kamel: { uri : "https://drive.google.com/uc?export=view&id=11P5qsz06Cetv8cXWZafZOZ-5cVkxs7pR"},
-  // Kenzi: { uri : "https://drive.google.com/uc?export=view&id=1yoRYV0InJKski_irbAShqR29EoxzJ40q"},
-  // Noah:  { uri : "https://drive.google.com/uc?export=view&id=1mCaKB7Vke5MWWNjuCIGS1AZJL1ox5T9b"},
-  // Yunis: { uri : "https://drive.google.com/uc?export=view&id=1HxG2smjvf3TbFkqxWEWcZPJteuY7BktE"},
   Mohey: {
     uri: "https://drive.google.com/thumbnail?id=1LiRgCLsAcX4xAaqCkM8vhH3Q1U92MFy7",
   },
