@@ -45,6 +45,19 @@ const pieColors = [
   "#000000",
 ];
 
+let allImages = {
+  supernova: require("../assets/Teams/supernova.png"),
+  thunder: require("../assets/Teams/thunder.png"),
+  alex: require("../assets/Teams/alex.png"),
+  natives: require("../assets/Teams/natives.png"),
+  zayed: require("../assets/Teams/zayed.png"),
+  airbenders: require("../assets/Teams/airbenders.png"),
+  pharos: require("../assets/Teams/pharos.png"),
+  mudd: require("../assets/Teams/mudd.png"),
+  "kuwait raptors": require("../assets/Teams/kuwait.png"),
+  any: require("../assets/Teams/anyOpponent.png"),
+};
+
 const db = SQLite.openDatabase("game.db");
 
 const PlayersOverallStats = ({ navigation }) => {
@@ -559,10 +572,17 @@ const PlayersOverallStats = ({ navigation }) => {
       };
       tempItems.push(tempItem);
       for (let i = 0; i < tempGameCategories[key].length; i++) {
+        let label = tempGameCategories[key][i].opponent;
+        let opponentLower = label.toLowerCase();
+        let myImage =
+          opponentLower in allImages
+            ? allImages[opponentLower]
+            : allImages["any"];
         let tempSubItem = {
-          label: tempGameCategories[key][i].opponent,
+          label: label,
           value: tempGameCategories[key][i].timestamp,
           parent: key,
+          icon: () => <Image source={myImage} style={styles.iconStyle} />,
         };
         tempItems.push(tempSubItem);
       }
@@ -870,5 +890,10 @@ const styles = StyleSheet.create({
   lottie: {
     width: 200,
     height: 200,
+  },
+  iconStyle: {
+    width: 30,
+    height: 30,
+    marginRight: 10,
   },
 });
