@@ -337,7 +337,7 @@ const ViewEvents = ({ route, navigation }) => {
     } else if (curr["action"] === "Defence") {
       description = player + " got a defence";
     } else if (curr["action"] === "Drop") {
-      description = player + " dropped a dic from " + associatedPlayer;
+      description = player + " dropped a disc from " + associatedPlayer;
     } else if (curr["action"] === "Score") {
       description = player + " scored a goal, assist from " + associatedPlayer;
     } else if (curr["action"] === "Throwaway") {

@@ -1911,7 +1911,7 @@ const RecordGame = ({ route, navigation }) => {
     } else if (prev["action"] === "Defence") {
       description = player + " got a defence";
     } else if (prev["action"] === "Drop") {
-      description = player + " dropped a dic from " + associatedPlayer;
+      description = player + " dropped a disc from " + associatedPlayer;
     } else if (prev["action"] === "Score") {
       description = player + " scored a goal, assist " + associatedPlayer;
     } else if (prev["action"] === "Throwaway") {
