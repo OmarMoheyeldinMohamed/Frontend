@@ -32,6 +32,7 @@ let allImages = {
   airbenders: require("../assets/Teams/airbenders.png"),
   pharos: require("../assets/Teams/pharos.png"),
   mudd: require("../assets/Teams/mudd.png"),
+  "kuwait raptors": require("../assets/Teams/kuwait.png"),
   any: require("../assets/Teams/anyOpponent.png"),
 };
 
@@ -52,7 +53,6 @@ const GameHome = ({ route, navigation }) => {
     theirScore,
   } = route.params.game;
   const isAdmin = route.params.isAdmin;
-
 
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
@@ -89,8 +89,6 @@ const GameHome = ({ route, navigation }) => {
         }
       );
     });
-
-    
 
     axios({
       method: "put",

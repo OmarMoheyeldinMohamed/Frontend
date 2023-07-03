@@ -17,6 +17,7 @@ let allImages = {
   airbenders: require("../assets/Teams/airbenders.png"),
   pharos: require("../assets/Teams/pharos.png"),
   mudd: require("../assets/Teams/mudd.png"),
+  "kuwait raptors": require("../assets/Teams/kuwait.png"),
   any: require("../assets/Teams/anyOpponent.png"),
 };
 
