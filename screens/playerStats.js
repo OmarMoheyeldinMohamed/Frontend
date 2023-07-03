@@ -252,7 +252,21 @@ const PLayerStats = ({ route, navigation }) => {
             }
           }
 
-          // console.log(piedata);
+          // if a player has throws to more than 10 players then only show top 10
+          for (let i = 0; i < piedata.length; i++) {
+            piedata[i].sort((a, b) => {
+              return b.value - a.value;
+            });
+            if (piedata[i].length > 10) {
+              piedata[i] = piedata[i].slice(0, 10);
+            }
+            // reassign colors
+            color = 0;
+            for (let j = 0; j < piedata[i].length; j++) {
+              piedata[i][j].color = pieColors[color++ % pieColors.length];
+            }
+          }
+
           setPieDatas(piedata);
 
           let piedata2 = [];
@@ -273,6 +287,20 @@ const PLayerStats = ({ route, navigation }) => {
             }
           }
 
+          for (let i = 0; i < piedata2.length; i++) {
+            piedata2[i].sort((a, b) => {
+              return b.value - a.value;
+            });
+            if (piedata2[i].length > 10) {
+              piedata2[i] = piedata2[i].slice(0, 10);
+            }
+            // reassign colors
+            color = 0;
+            for (let j = 0; j < piedata2[i].length; j++) {
+              piedata2[i][j].color = pieColors[color++ % pieColors.length];
+            }
+          }
+
           let piedata3 = [];
           color = 0;
           for (let i = 0; i < playersRef.current.length; i++) {
@@ -288,6 +316,20 @@ const PLayerStats = ({ route, navigation }) => {
                 legendFontColor: "#000",
                 legendFontSize: 15,
               });
+            }
+          }
+
+          for (let i = 0; i < piedata3.length; i++) {
+            piedata3[i].sort((a, b) => {
+              return b.value - a.value;
+            });
+            if (piedata3[i].length > 10) {
+              piedata3[i] = piedata3[i].slice(0, 10);
+            }
+            // reassign colors
+            color = 0;
+            for (let j = 0; j < piedata3[i].length; j++) {
+              piedata3[i][j].color = pieColors[color++ % pieColors.length];
             }
           }
 
@@ -312,15 +354,23 @@ const PLayerStats = ({ route, navigation }) => {
             }
           }
 
-          // console.log(piedata);
+          for (let i = 0; i < piedata4.length; i++) {
+            piedata4[i].sort((a, b) => {
+              return b.value - a.value;
+            });
+            if (piedata4[i].length > 10) {
+              piedata4[i] = piedata4[i].slice(0, 10);
+            }
+            // reassign colors
+            color = 0;
+            for (let j = 0; j < piedata4[i].length; j++) {
+              piedata4[i][j].color = pieColors[color++ % pieColors.length];
+            }
+          }
+
           setPieDatas4(piedata4);
 
-          // console.log(piedata2);
           setPieDatas2(piedata2);
-
-          //   console.log(playerStatsRef.current[selectedPlayer]);
-
-          //   console.log(playerToPlayer);
         },
         (_, error) => {
           console.log(error);

@@ -191,7 +191,6 @@ const PlayersOverallStats = ({ navigation }) => {
           sql,
           [],
           (_, { rows: { _array } }) => {
-            //   console.log(_array);
             let playersActions = _array;
             // filter to get actions for each player
             let playerThrows = [];
@@ -326,12 +325,6 @@ const PlayersOverallStats = ({ navigation }) => {
             }
             // calculate stats for each player
             for (let j = 0; j < playersRef.current.length; j++) {
-              // if (j === 3) {
-              //   console.log("Throws", playerThrows[j]);
-              //   console.log("Throwaways", playerThrowaways[j]);
-              //   console.log("Catches", playerCatches[j]);
-              //   console.log("Drops", playerDrops[j]);
-              // }
               let throwAccuracy =
                 playerThrows[j] / (playerThrows[j] + playerThrowaways[j]);
               let catchAccuracy =
@@ -352,9 +345,6 @@ const PlayersOverallStats = ({ navigation }) => {
                 throwAccuracy,
               ];
             }
-            // console.log(playerStatsRef.current[3]);
-
-            //   console.log(playerStatsRef.current);
             setPlayerStats(playerStatsRef.current);
             setPlayerCatches(playerCatches);
             setPlayerThrows(playerThrows);
@@ -382,7 +372,21 @@ const PlayersOverallStats = ({ navigation }) => {
               }
             }
 
-            // console.log(piedata);
+            // if a player has throws to more than 10 players then only show top 10
+            for (let i = 0; i < piedata.length; i++) {
+              piedata[i].sort((a, b) => {
+                return b.value - a.value;
+              });
+              if (piedata[i].length > 10) {
+                piedata[i] = piedata[i].slice(0, 10);
+              }
+              // reassign colors
+              color = 0;
+              for (let j = 0; j < piedata[i].length; j++) {
+                piedata[i][j].color = pieColors[color++ % pieColors.length];
+              }
+            }
+
             setPieDatas(piedata);
 
             let piedata2 = [];
@@ -407,6 +411,20 @@ const PlayersOverallStats = ({ navigation }) => {
               }
             }
 
+            for (let i = 0; i < piedata2.length; i++) {
+              piedata2[i].sort((a, b) => {
+                return b.value - a.value;
+              });
+              if (piedata2[i].length > 10) {
+                piedata2[i] = piedata2[i].slice(0, 10);
+              }
+              // reassign colors
+              color = 0;
+              for (let j = 0; j < piedata2[i].length; j++) {
+                piedata2[i][j].color = pieColors[color++ % pieColors.length];
+              }
+            }
+
             let piedata3 = [];
             for (let i = 0; i < playersRef.current.length; i++) {
               piedata3.push([]);
@@ -427,7 +445,20 @@ const PlayersOverallStats = ({ navigation }) => {
               }
             }
 
-            // console.log(piedata);
+            for (let i = 0; i < piedata3.length; i++) {
+              piedata3[i].sort((a, b) => {
+                return b.value - a.value;
+              });
+              if (piedata3[i].length > 10) {
+                piedata3[i] = piedata3[i].slice(0, 10);
+              }
+              // reassign colors
+              color = 0;
+              for (let j = 0; j < piedata3[i].length; j++) {
+                piedata3[i][j].color = pieColors[color++ % pieColors.length];
+              }
+            }
+
             setPieDatas3(piedata3);
 
             let piedata4 = [];
@@ -448,17 +479,25 @@ const PlayersOverallStats = ({ navigation }) => {
               }
             }
 
-            // console.log(piedata);
+            for (let i = 0; i < piedata4.length; i++) {
+              piedata4[i].sort((a, b) => {
+                return b.value - a.value;
+              });
+              if (piedata4[i].length > 10) {
+                piedata4[i] = piedata4[i].slice(0, 10);
+              }
+              // reassign colors
+              color = 0;
+              for (let j = 0; j < piedata4[i].length; j++) {
+                piedata4[i][j].color = pieColors[color++ % pieColors.length];
+              }
+            }
+
             setPieDatas4(piedata4);
 
-            // console.log(piedata2);
             setPieDatas2(piedata2);
 
             resolve(_array);
-
-            //   console.log(playerStatsRef.current[selectedPlayer]);
-
-            //   console.log(playerToPlayer);
           },
           (_, error) => {
             console.log(error);
@@ -601,8 +640,6 @@ const PlayersOverallStats = ({ navigation }) => {
           legendFontSize: 15,
         },
       ];
-
-  //   console.log(pieData);
 
   const applyFilter = () => {
     toggleModal();
@@ -765,7 +802,7 @@ const PlayersOverallStats = ({ navigation }) => {
           <PieChart
             data={pieData3}
             width={screenWidth}
-            height={150}
+            height={200}
             chartConfig={styles.chartConfig}
             accessor="value"
           />
@@ -776,7 +813,7 @@ const PlayersOverallStats = ({ navigation }) => {
           <PieChart
             data={pieData4}
             width={screenWidth}
-            height={150}
+            height={200}
             chartConfig={styles.chartConfig}
             accessor="value"
           />
