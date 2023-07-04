@@ -82,14 +82,14 @@ const TeamStats = ({ navigation }) => {
   const [open, setOpen] = useState(true);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([]);
-  const [heightOfDropdown, setHeightOfDropdown] = React.useState(0);
+  const [heightOfScreen, setHeightOfScreen] = React.useState(0);
   let selectedGames = [];
   const [allGames, setAllGames] = React.useState([]);
   const [visible, setVisible] = React.useState(false);
 
   const onLayout = (event) => {
     const { x, y, height, width } = event.nativeEvent.layout;
-    setHeightOfDropdown(height);
+    setHeightOfScreen(height);
   };
 
   const toggleModal = () => {
@@ -481,6 +481,7 @@ const TeamStats = ({ navigation }) => {
         height: "100%",
         backgroundColor: "#fff",
       }}
+      onLayout={onLayout}
     >
       <ScrollView>
         <View
@@ -558,7 +559,7 @@ const TeamStats = ({ navigation }) => {
       >
         <View
           style={{
-            height: "90%",
+            height: open ? "90%" : null,
             justifyContent: "flex-start",
             alignItems: "center",
             alignContent: "center",
@@ -570,7 +571,12 @@ const TeamStats = ({ navigation }) => {
           <Text style={{ fontSize: 20, fontWeight: "bold", margin: 20 }}>
             Filter Games:
           </Text>
-          <View style={{ padding: 10, flex: 1 }} onLayout={onLayout}>
+          <View
+            style={{
+              padding: 10,
+              height: open ? heightOfScreen * 0.9 - 120 : null,
+            }}
+          >
             <DropDownPicker
               open={open}
               value={value}
@@ -592,7 +598,8 @@ const TeamStats = ({ navigation }) => {
               ]}
               placeholder="Select Games"
               // max height = parent height - 20
-              maxHeight={heightOfDropdown - 60}
+              maxHeight={heightOfScreen * 0.9 - 180}
+              dropDownDirection="BOTTOM"
             />
           </View>
           <MyButton text="Apply" onPress={applyFilter} />
