@@ -19,7 +19,7 @@ import { Keyboard } from "react-native";
 import LottieView from "lottie-react-native";
 
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
 
 const db = SQLite.openDatabase("game.db");
 

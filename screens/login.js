@@ -12,7 +12,7 @@ import { Alert } from "react-native";
 import KeyboardAvoidingView from "react-native/Libraries/Components/Keyboard/KeyboardAvoidingView";
 
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
 const db = SQLite.openDatabase("game.db");
 
 const Login = ({ navigation, route }) => {
@@ -510,10 +510,8 @@ const Login = ({ navigation, route }) => {
           async (_, { rows: { _array } }) => {
             if (_array.length > 0 && _array[0].number === 1) {
               resolve(_array[0].number);
-            }
-            else{
-              if (_array.length === 0)
-              {
+            } else {
+              if (_array.length === 0) {
                 await new Promise((resolve, reject) => {
                   db.transaction((tx) => {
                     tx.executeSql(
@@ -557,8 +555,7 @@ const Login = ({ navigation, route }) => {
                     }
                   );
                 });
-              }
-              );
+              });
               await new Promise((resolve, reject) => {
                 db.transaction((tx) => {
                   tx.executeSql(
@@ -572,8 +569,7 @@ const Login = ({ navigation, route }) => {
                     }
                   );
                 });
-              }
-              );
+              });
 
               // set number to 1
               await new Promise((resolve, reject) => {
@@ -589,13 +585,10 @@ const Login = ({ navigation, route }) => {
                     }
                   );
                 });
-              }
-              );
-              
+              });
+
               resolve(0);
-            } 
-            
-            
+            }
           },
           (_, error) => {
             reject(error);

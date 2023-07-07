@@ -17,6 +17,12 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "appleId": "youssef_megahed@icloud.com",
+        "ascAppId": "6451046195",
+        "appleTeamId": "49NR59H2SH"
+      }
+    }
   }
 }

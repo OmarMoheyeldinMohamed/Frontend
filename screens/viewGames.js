@@ -19,7 +19,7 @@ import Modal from "react-native-modal";
 // import AnimatedLoader from "react-native-animated-loader";
 import LottieView from "lottie-react-native";
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
 const db = SQLite.openDatabase("game.db");
 
 async function getGames() {
@@ -66,8 +66,7 @@ const ViewGames = ({ navigation, route }) => {
   const onScreenLoad = async () => {
     try {
       let unsortedGames = await getGames();
-      let sortedGames = 
-      unsortedGames.sort((a, b) => {
+      let sortedGames = unsortedGames.sort((a, b) => {
         let timestamp = a.timestamp;
         let year = timestamp.substring(0, 4);
         let month = timestamp.split("-")[1];
@@ -116,7 +115,7 @@ const ViewGames = ({ navigation, route }) => {
     var timeStr = item.timestamp;
     // var parts = timestamp.split(/[- :]/); // Split the timestamp into parts
     // var utcDate = Date.UTC(parts[0], parts[1] - 1, parts[2], parts[3], parts[4], parts[5]);
-    // var date = new Date(utcDate);  
+    // var date = new Date(utcDate);
     // let dateISO = date.toISOString();
     // let datepart = dateISO.split("T")[0];
     // let timepart = dateISO.split("T")[1];
@@ -124,7 +123,6 @@ const ViewGames = ({ navigation, route }) => {
     // let timeStr = datepart + " " + timepart;
     // console.log("timeStr", timeStr);
     // console.log("item", item.timestamp);
-
 
     // axios
     //   .delete(ip + "/game/" + item.opponent + "/" + axiosTimestampStr)
@@ -181,7 +179,6 @@ const ViewGames = ({ navigation, route }) => {
           let timeStr = datepart + " " + timepart;
           let opponent = game.opponent;
 
-
           let gameExists = false;
           games.forEach((localGame) => {
             if (
@@ -224,11 +221,7 @@ const ViewGames = ({ navigation, route }) => {
 
     let onlineActionPerformed = await axios
       .get(
-        ip +
-          "/gameActions/?timestamp=" +
-          timeStr +
-          "&opponent=" +
-          game.opponent
+        ip + "/gameActions/?timestamp=" + timeStr + "&opponent=" + game.opponent
       )
       .then((response) => {
         // console.log("res", response.data);

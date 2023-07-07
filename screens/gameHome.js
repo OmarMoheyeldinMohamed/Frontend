@@ -20,7 +20,7 @@ import axios from "axios";
 import LottieView from "lottie-react-native";
 
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
 
 let mayhemLogo = require("../assets/logo.png");
 let allImages = {

@@ -23,7 +23,7 @@ import * as SQLite from "expo-sqlite";
 import LottieView from "lottie-react-native";
 
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://mayhembackend.onrender.com";
+const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
 
 async function getCompetitions() {
   // use mysql to get all competitions
@@ -154,12 +154,10 @@ const AddGame = ({ route, navigation }) => {
             console.log("Error: " + error);
           }
         );
-      }
-      );
+      });
     } catch (err) {
       console.log(err);
     }
-
   };
 
   useEffect(() => {
@@ -309,9 +307,6 @@ const AddGame = ({ route, navigation }) => {
     timepart = timepart.split(".")[0];
     let timeStr = datepart + " " + timepart;
     console.log(timeStr);
-
-   
-
 
     db.transaction((tx) => {
       tx.executeSql(
