@@ -4,7 +4,7 @@
     "slug": "Frontend",
     "privacy": "public",
     "description": "Keep track of stats for Mayhem",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/logo1.png",
     "userInterfaceStyle": "light",
@@ -17,12 +17,11 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/c852320c-1cff-4bb3-aeaf-464e10f9ce47"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.omarmohey.mayhem"
+      "bundleIdentifier": "com.omarmohey.mayhem",
+      "buildNumber": "2"
     },
     "android": {
       "adaptiveIcon": {
