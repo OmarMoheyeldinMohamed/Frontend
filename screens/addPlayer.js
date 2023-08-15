@@ -485,7 +485,7 @@ const AddPlayer = ({ route, navigation }) => {
         overlayColor="rgba(255,255,255,0.3)"
         animationStyle={styles.lottie}
         speed={1}
-        // source={require("../assets/loading.json")}
+        // source={require("../assets/animations.json")}
       >
         <Text>Loading Players...</Text>
       </AnimatedLoader> */}
@@ -504,7 +504,7 @@ const AddPlayer = ({ route, navigation }) => {
           }}
         >
           <LottieView
-            source={require("../assets/loading.json")}
+            source={require("../assets/animations.json")}
             style={styles.lottie}
             autoPlay
           />

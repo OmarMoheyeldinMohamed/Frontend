@@ -490,7 +490,7 @@ const ViewGames = ({ navigation, route }) => {
             }}
           >
             <LottieView
-              source={require("../assets/loading.json")}
+              source={require("../assets/animations.json")}
               style={styles.lottie}
               autoPlay
             />
@@ -513,7 +513,7 @@ const ViewGames = ({ navigation, route }) => {
           }}
         >
           <LottieView
-            source={require("../assets/loading.json")}
+            source={require("../assets/animations.json")}
             style={styles.lottie} 
             autoPlay
           />

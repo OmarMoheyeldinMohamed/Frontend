@@ -512,7 +512,7 @@ const AddGame = ({ route, navigation }) => {
           }}
         >
           <LottieView
-            source={require("../assets/loading.json")}
+            source={require("../assets/animations.json")}
             style={styles.lottie}
             autoPlay
           />
