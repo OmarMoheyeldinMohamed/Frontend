@@ -100,6 +100,7 @@ const AddGame = ({ route, navigation }) => {
 
   const [selectedCompetition, setSelectedCompetition] = React.useState([]);
   const [selectedOpponent, setSelectedOpponent] = React.useState([]);
+  const [pointCap, setPointCap] = useState(0);
 
   const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
@@ -121,6 +122,10 @@ const AddGame = ({ route, navigation }) => {
 
   const [competitionsData, setCompetitionsData] = React.useState([]);
   const [opponentData, setOpponentData] = React.useState([]);
+
+  function pointCapInputHandler(enteredText) {
+    setPointCap(enteredText);
+  }
 
   const onScreenLoad = async () => {
     try {
@@ -262,6 +267,17 @@ const AddGame = ({ route, navigation }) => {
       );
       return;
     }
+    if (pointCap == 0) {
+      Alert.alert(
+        "Field Missing",
+        "Please enter a point cap",
+        [{ text: "Ok", onPress: () => console.log("") }],
+        {
+          cancelable: true,
+        }
+      );
+      return;
+    }
 
     // console.log(selectedCompetition);
     // console.log(selectedOpponent);
@@ -275,6 +291,7 @@ const AddGame = ({ route, navigation }) => {
       data: {
         category: selectedCompetition,
         opponent: selectedOpponent,
+        pointCap: pointCap,
         isHome: isHome,
       },
     })
@@ -311,7 +328,7 @@ const AddGame = ({ route, navigation }) => {
     db.transaction((tx) => {
       tx.executeSql(
         `
-        INSERT INTO game (opponent, home, category, timestamp) VALUES ('${selectedOpponent}', '${isHome}', '${selectedCompetition}', '${timeStr}');
+        INSERT INTO game (opponent, home, category, timestamp, pointCap) VALUES ('${selectedOpponent}', '${isHome}', '${selectedCompetition}', '${timeStr}', '${pointCap}');
         `,
         null,
         (tx, results) => {
@@ -464,6 +481,22 @@ const AddGame = ({ route, navigation }) => {
         </Modal>
       </View>
 
+      <View style={{flexDirection:"row", margin: 14}}>  
+      <Text style={{ fontSize: 14, margin: 10, marginTop: 15 }}>
+        Point Cap:
+      </Text>
+      <TextInput
+          keyboardType="numeric"
+          onChangeText={pointCapInputHandler}
+          style={styles.pointCapStyle }
+          value={pointCap}
+          returnKeyType="done"
+          onSubmitEditing={() => Keyboard.dismiss()}
+      />
+
+      </View>
+
+
       <Pressable onPress={changeCheckbox}>
         <View margin={10}>
           <View style={styles.container2}>
@@ -477,6 +510,9 @@ const AddGame = ({ route, navigation }) => {
           </View>
         </View>
       </Pressable>
+
+
+
       {/* center align MyButton */}
       <View
         style={{
@@ -553,11 +589,30 @@ const styles = StyleSheet.create({
     margin: 3,
     width: "100%",
   },
+  pointCapStyle: {
+    borderWidth: 1,
+    borderColor: "#808080",
+    backgroundColor: "#bfbfbd",
+    color: "#120438",
+    borderRadius: 8,
+    flex: 1,
+    padding: 10,
+    margin: 3,
+  },
   container2: {
     flex: 0,
     backgroundColor: "#fff",
     alignItems: "flex-start",
     justifyContent: "flex-start",
+    width: "100%",
+    flexDirection: "row",
+  },
+  container3: {
+    // flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "flex-start",
+    justifyContent: "space-evenly",
+    height: 60,
     width: "100%",
     flexDirection: "row",
   },

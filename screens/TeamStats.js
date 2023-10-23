@@ -190,6 +190,8 @@ const TeamStats = ({ navigation }) => {
         actions: gameActions,
         timestamp: gameTimestamp,
         startOffense: games[i]["startOffence"],
+        pointCap: games[i]["pointCap"],
+        halfTime: parseInt(games[i]["pointCap"] / 2) + 1,
       });
     }
 
@@ -212,6 +214,8 @@ const TeamStats = ({ navigation }) => {
       let defensePoints = 0;
       let offenseScore = 0;
       let defenseScore = 0;
+      let halfTime = game.halfTime;
+      let pointCap = game.pointCap;
 
       let point = 0;
       let passes = 0;
@@ -228,7 +232,7 @@ const TeamStats = ({ navigation }) => {
             defenseScore++;
           }
           myScore++;
-          if (myScore === 7) {
+          if (myScore === halfTime) {
             currPointOffence = !startOffense;
           } else {
             currPointOffence = false;
@@ -249,7 +253,7 @@ const TeamStats = ({ navigation }) => {
             defensePoints++;
           }
           theirScore++;
-          if (theirScore === 7) {
+          if (theirScore === halfTime) {
             currPointOffence = !startOffense;
           } else {
             currPointOffence = true;

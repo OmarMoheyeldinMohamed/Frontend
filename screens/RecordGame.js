@@ -47,6 +47,8 @@ var myImage;
 const RecordGame = ({ route, navigation }) => {
   let opponent = route.params.opponent;
   let gameTimestamp = route.params.timestamp;
+  let pointCap = route.params.pointCap;
+  let halfTime = parseInt(pointCap/ 2) + 1;
   const db = SQLite.openDatabase("game.db");
   const [isModalVisible, setModalVisible] = useState(false);
   const [playersOnCourt, setPlayersOnCourt] = useState([
@@ -469,14 +471,14 @@ const RecordGame = ({ route, navigation }) => {
           scoringActions[i].action === "Callahan"
         ) {
           mypoints++;
-          if (mypoints === 7) {
+          if (mypoints === halfTime) {
             x = !Boolean(route.params.startOffence);
           } else {
             x = false;
           }
         } else {
           theirpoints++;
-          if (theirpoints === 7) {
+          if (theirpoints === halfTime) {
             x = !Boolean(route.params.startOffence);
           } else {
             x = true;
@@ -493,7 +495,7 @@ const RecordGame = ({ route, navigation }) => {
           action.action === "In Point"
         );
       });
-      if (mypoints === 13 || theirpoints === 13) {
+      if (mypoints === pointCap || theirpoints === pointCap) {
         lastPointPlayers = actionsPerformed.filter((action) => {
           return (
             action.point === mypoints + theirpoints &&
@@ -1006,7 +1008,7 @@ const RecordGame = ({ route, navigation }) => {
       text = "offence";
     }
 
-    if (mys + 1 === 7 && theirs < 7) {
+    if (mys + 1 === halfTime && theirs < halfTime) {
       Alert.alert(
         "Half Time",
         "Half time reached you now play " + text,
@@ -1020,7 +1022,7 @@ const RecordGame = ({ route, navigation }) => {
       );
       offence = !Boolean(route.params.startOffence);
       setOnOffense(!Boolean(route.params.startOffence));
-    } else if (mys + 1 === 13) {
+    } else if (mys + 1 === pointCap) {
       Alert.alert(
         "Game Over",
         "Good game you won!",
@@ -1231,7 +1233,7 @@ const RecordGame = ({ route, navigation }) => {
       text = "offence";
     }
 
-    if (mys + 1 === 7 && theirs < 7) {
+    if (mys + 1 === halfTime && theirs < halfTime) {
       Alert.alert(
         "Half Time",
         "Half time reached you now play " + text,
@@ -1245,7 +1247,7 @@ const RecordGame = ({ route, navigation }) => {
       );
       offence = !Boolean(route.params.startOffence);
       setOnOffense(!Boolean(route.params.startOffence));
-    } else if (mys + 1 === 13) {
+    } else if (mys + 1 === pointCap) {
       Alert.alert(
         "Game Over",
         "Good game you won!",
@@ -1379,7 +1381,7 @@ const RecordGame = ({ route, navigation }) => {
       text = "offence";
     }
 
-    if (theirs + 1 === 7 && mys < 7) {
+    if (theirs + 1 === halfTime && mys < halfTime) {
       Alert.alert(
         "Half Time",
         "Half time reached you now play " + text,
@@ -1393,7 +1395,7 @@ const RecordGame = ({ route, navigation }) => {
       );
       offence = !Boolean(route.params.startOffence);
       setOnOffense(!Boolean(route.params.startOffence));
-    } else if (theirs + 1 == 13) {
+    } else if (theirs + 1 == pointCap) {
       Alert.alert(
         "Game Over",
         "Pathetic performance, you lost",
@@ -1758,7 +1760,7 @@ const RecordGame = ({ route, navigation }) => {
             }
           );
         });
-        if (myScore === 13) {
+        if (myScore === pointCap) {
           setDisableAllButtons(false);
         }
         setMyScore(myScore - 1);
@@ -1800,7 +1802,7 @@ const RecordGame = ({ route, navigation }) => {
             }
           );
         });
-        if (theirScore === 13) {
+        if (theirScore === pointCap) {
           setDisableAllButtons(false);
         }
         setTheirScore(theirScore - 1);

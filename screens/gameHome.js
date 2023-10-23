@@ -51,6 +51,7 @@ const GameHome = ({ route, navigation }) => {
     myScore,
     startOffence,
     theirScore,
+    pointCap
   } = route.params.game;
   const isAdmin = route.params.isAdmin;
 
@@ -468,6 +469,7 @@ const GameHome = ({ route, navigation }) => {
             navigation.navigate("Record Game", {
               opponent: opponent,
               timestamp: timestamp,
+              pointCap: pointCap,
               startOffence: Boolean(toggleCheckBox),
             })
           }

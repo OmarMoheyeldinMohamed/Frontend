@@ -508,8 +508,38 @@ const Login = ({ navigation, route }) => {
           "select * from updates",
           [],
           async (_, { rows: { _array } }) => {
-            if (_array.length > 0 && _array[0].number === 1) {
+            if (_array.length > 0 && _array[0].number === 2) {
               resolve(_array[0].number);
+            } else if (_array.length > 0 && _array[0].number === 1) {
+              await new Promise((resolve, reject) => {
+                // Alter Table game add column pointCap set default to 13
+                db.transaction((tx) => {
+                  tx.executeSql(
+                    "ALTER TABLE game ADD COLUMN pointCap int DEFAULT 13;",
+                    [],
+                    (_, { rows: { _array } }) => {
+                      resolve(_array);
+                    },
+                    (_, error) => {
+                      reject(error);
+                    }
+                  );
+                }
+                );
+
+                db.transaction((tx) => {
+                  tx.executeSql(
+                    "update updates set number = 2;",
+                    [],
+                    (_, { rows: { _array } }) => {
+                      resolve(_array);
+                    },
+                    (_, error) => {
+                      reject(error);
+                    }
+                  );
+                });
+              });
             } else {
               if (_array.length === 0) {
                 await new Promise((resolve, reject) => {
