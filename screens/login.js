@@ -323,6 +323,7 @@ const Login = ({ navigation, route }) => {
           home tinyint(1) DEFAULT NULL,
           category varchar(50) DEFAULT NULL,
           startOffence tinyint(1) DEFAULT '1',
+          pointCap int DEFAULT 13,
           PRIMARY KEY (timestamp,opponent)
         ) `,
         [],
