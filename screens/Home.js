@@ -9,7 +9,9 @@ import { FlatList } from "react-native-gesture-handler";
 import { Dimensions, Alert } from "react-native";
 const screenWidth = Dimensions.get("window").width;
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
+import address from "../config.js";
+const ip = address.ip;
+
 const db = SQLite.openDatabase("game.db");
 
 /* <MyButton

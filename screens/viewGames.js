@@ -19,7 +19,9 @@ import Modal from "react-native-modal";
 // import AnimatedLoader from "react-native-animated-loader";
 import LottieView from "lottie-react-native";
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
+import address from "../config.js";
+const ip = address.ip;
+
 const db = SQLite.openDatabase("game.db");
 
 async function getGames() {

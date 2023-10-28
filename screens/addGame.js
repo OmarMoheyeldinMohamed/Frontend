@@ -23,7 +23,8 @@ import * as SQLite from "expo-sqlite";
 import LottieView from "lottie-react-native";
 
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
+import address from "../config.js";
+const ip = address.ip;
 
 async function getCompetitions() {
   // use mysql to get all competitions

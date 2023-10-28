@@ -11,7 +11,9 @@ import Modal from "react-native-modal";
 import { ScrollView } from "react-native-gesture-handler";
 const screenWidth = Dimensions.get("window").width;
 // const ip = "http://192.168.65.177:3000";
-const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
+import address from "../config.js";
+const ip = address.ip;
+
 const db = SQLite.openDatabase("game.db");
 
 const PlayersTreasury = ({ route, navigation }) => {

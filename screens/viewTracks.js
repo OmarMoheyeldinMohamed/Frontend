@@ -30,7 +30,9 @@ import LottieView from "lottie-react-native";
 
 const screenWidth = Dimensions.get("window").width;
 // const ip = "http://192.168.1.4:3000";
-const ip = "https://zany-pear-bandicoot-hose.cyclic.app";
+import address from "../config.js";
+const ip = address.ip;
+
 const db = SQLite.openDatabase("game.db");
 
 const ViewTracks = ({ route, navigation }) => {
