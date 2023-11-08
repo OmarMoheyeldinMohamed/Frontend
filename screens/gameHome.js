@@ -309,6 +309,7 @@ const GameHome = ({ route, navigation }) => {
         isHome: gameDetails.home,
         category: gameDetails.category,
         startOffence: gameDetails.startOffence,
+        pointCap: gameDetails.pointCap,
       },
     })
       .then(function (response) {

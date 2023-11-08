@@ -282,7 +282,7 @@ const ViewGames = ({ navigation, route }) => {
     await db.transaction((tx) => {
       tx.executeSql(
         `
-        INSERT INTO game (opponent, timestamp, myScore, theirScore, home, category, startOffence) VALUES (?, ?, ?, ?, ?, ?, ?);
+        INSERT INTO game (opponent, timestamp, myScore, theirScore, home, category, startOffence, pointCap) VALUES (?, ?, ?, ?, ?, ?, ?, ?);
         `,
         [
           game.opponent,
@@ -292,6 +292,7 @@ const ViewGames = ({ navigation, route }) => {
           game.home,
           game.category,
           game.startOffence,
+          game.pointCap,
         ],
         (tx, results) => {
           // console.log(results);
