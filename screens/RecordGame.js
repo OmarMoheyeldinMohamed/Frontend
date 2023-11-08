@@ -496,6 +496,9 @@ const RecordGame = ({ route, navigation }) => {
           action.action === "In Point"
         );
       });
+      console.log("lastPointPlayers", lastPointPlayers);
+      console.log("mypoints", mypoints);
+      console.log("their points", theirpoints);
       if (mypoints === pointCap || theirpoints === pointCap) {
         lastPointPlayers = actionsPerformed.filter((action) => {
           return (
